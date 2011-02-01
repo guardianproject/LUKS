@@ -1,0 +1,23 @@
+
+To build the whole shebang, run: make.  It'll download the sources, untar
+them, patch them, and set everything up, then build everything and install it
+into external/lib, external/include, etc.
+
+
+Notes About This Build
+----------------------
+
+- Android's bionic libc does not include getline() or getdelim(), so we needed
+  to get it from GNU libc.  The getline.c, getline.h, getdelim.c, and
+  getdelim.h files in the cryptsetup patch are from:
+  http://android-wifi-tether.googlecode.com/svn/tools/wireless-tools/
+
+- This was developed on an Ubuntu/Maverick i386 32-bit machine.  It might work
+  on other setups, but no guarantees.
+
+- config.guess and config.sub are included from libtool 2.4 to support the
+  'arm-linux-androideabi' host type.  Most of the tarballs include older
+  versions of those scripts, which do not know about the Android host type.
+
+- some pkg-config files are included if you happen to want to use this stuff
+  to build other programs for Android

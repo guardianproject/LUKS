@@ -1,0 +1,268 @@
+--- cryptsetup-1.2.0/lib/utils.c	2010-11-15 10:37:46.000000000 -0500
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/lib/utils.c	2011-02-02 01:40:52.000000000 -0500
+@@ -384,11 +384,13 @@
+ {
+ 	if (!_memlock_count++) {
+ 		log_dbg("Locking memory.");
++#ifndef __ANDROID__
+ 		if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
+ 			log_err(ctx, _("WARNING!!! Possibly insecure memory. Are you root?\n"));
+ 			_memlock_count--;
+ 			return 0;
+ 		}
++#endif
+ 		errno = 0;
+ 		if (((_priority = getpriority(PRIO_PROCESS, 0)) == -1) && errno)
+ 			log_err(ctx, _("Cannot get process priority.\n"));
+@@ -404,8 +406,10 @@
+ {
+ 	if (_memlock_count && (!--_memlock_count)) {
+ 		log_dbg("Unlocking memory.");
++#ifndef __ANDROID__
+ 		if (munlockall())
+ 			log_err(ctx, _("Cannot unlock memory."));
++#endif
+ 		if (setpriority(PRIO_PROCESS, 0, _priority))
+ 			log_err(ctx, _("setpriority %u failed: %s"), _priority, strerror(errno));
+ 	}
+--- cryptsetup-1.2.0/src/Makefile.am	2010-10-27 04:21:23.000000000 -0400
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/Makefile.am	2011-02-02 01:48:11.000000000 -0500
+@@ -11,6 +11,10 @@
+ 
+ cryptsetup_SOURCES = \
+ 	$(top_builddir)/lib/utils_crypt.c	\
++	getline.c \
++	getline.h \
++	getdelim.c \
++	getdelim.h \
+ 	cryptsetup.c				\
+ 	cryptsetup.h
+ 
+--- /dev/null	2011-02-01 15:10:32.641579002 -0500
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getline.c	2011-02-02 01:45:11.000000000 -0500
+@@ -0,0 +1,32 @@
++/* getline.c --- Implementation of replacement getline function.
++   Copyright (C) 2005 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or
++   modify it under the terms of the GNU General Public License as
++   published by the Free Software Foundation; either version 2, or (at
++   your option) any later version.
++
++   This program is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++   02110-1301, USA.  */
++
++/* Written by Simon Josefsson. */
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++#include "getdelim.h"
++#include "getline.h"
++
++ssize_t
++getline (char **lineptr, size_t *n, FILE *stream)
++{
++  return getdelim (lineptr, n, '\n', stream);
++}
+--- /dev/null	2011-02-01 15:10:32.641579002 -0500
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getline.h	2011-02-02 01:45:11.000000000 -0500
+@@ -0,0 +1,28 @@
++/* getline.h --- Prototype for replacement getline function.
++   Copyright (C) 2005 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or
++   modify it under the terms of the GNU General Public License as
++   published by the Free Software Foundation; either version 2, or (at
++   your option) any later version.
++
++   This program is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++   02110-1301, USA.  */
++
++/* Written by Simon Josefsson. */
++
++/* Get size_t, FILE, ssize_t.  And getline, if available.  */
++# include <stddef.h>
++# include <stdio.h>
++# include <sys/types.h>
++
++#if !HAVE_DECL_GETLINE
++ssize_t getline (char **lineptr, size_t *n, FILE *stream);
++#endif /* !HAVE_GETLINE */
+--- /dev/null	2011-02-01 15:10:32.641579002 -0500
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getdelim.c	2011-02-02 01:45:19.000000000 -0500
+@@ -0,0 +1,128 @@
++/* getdelim.c --- Implementation of replacement getdelim function.
++   Copyright (C) 1994, 1996, 1997, 1998, 2001, 2003, 2005 Free
++   Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or
++   modify it under the terms of the GNU General Public License as
++   published by the Free Software Foundation; either version 2, or (at
++   your option) any later version.
++
++   This program is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++   02110-1301, USA.  */
++
++/* Ported from glibc by Simon Josefsson. */
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++#include "getdelim.h"
++
++#include <limits.h>
++#include <stdlib.h>
++#include <errno.h>
++
++#ifndef SIZE_MAX
++# define SIZE_MAX ((size_t) -1)
++#endif
++#ifndef SSIZE_MAX
++# define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
++#endif
++#if !HAVE_FLOCKFILE
++# undef flockfile
++# define flockfile(x) ((void) 0)
++#endif
++#if !HAVE_FUNLOCKFILE
++# undef funlockfile
++# define funlockfile(x) ((void) 0)
++#endif
++
++/* Read up to (and including) a DELIMITER from FP into *LINEPTR (and
++   NUL-terminate it).  *LINEPTR is a pointer returned from malloc (or
++   NULL), pointing to *N characters of space.  It is realloc'ed as
++   necessary.  Returns the number of characters read (not including
++   the null terminator), or -1 on error or EOF.  */
++
++ssize_t
++getdelim (char **lineptr, size_t *n, int delimiter, FILE *fp)
++{
++  ssize_t result;
++  size_t cur_len = 0;
++
++  if (lineptr == NULL || n == NULL || fp == NULL)
++    {
++      errno = EINVAL;
++      return -1;
++    }
++
++  flockfile (fp);
++
++  if (*lineptr == NULL || *n == 0)
++    {
++      *n = 120;
++      *lineptr = (char *) malloc (*n);
++      if (*lineptr == NULL)
++	{
++	  result = -1;
++	  goto unlock_return;
++	}
++    }
++
++  for (;;)
++    {
++      int i;
++
++      i = getc (fp);
++      if (i == EOF)
++	{
++	  result = -1;
++	  break;
++	}
++
++      /* Make enough space for len+1 (for final NUL) bytes.  */
++      if (cur_len + 1 >= *n)
++	{
++	  size_t needed_max =
++	    SSIZE_MAX < SIZE_MAX ? (size_t) SSIZE_MAX + 1 : SIZE_MAX;
++	  size_t needed = 2 * *n + 1;   /* Be generous. */
++	  char *new_lineptr;
++
++	  if (needed_max < needed)
++	    needed = needed_max;
++	  if (cur_len + 1 >= needed)
++	    {
++	      result = -1;
++	      goto unlock_return;
++	    }
++
++	  new_lineptr = (char *) realloc (*lineptr, needed);
++	  if (new_lineptr == NULL)
++	    {
++	      result = -1;
++	      goto unlock_return;
++	    }
++
++	  *lineptr = new_lineptr;
++	  *n = needed;
++	}
++
++      (*lineptr)[cur_len] = i;
++      cur_len++;
++
++      if (i == delimiter)
++	break;
++    }
++  (*lineptr)[cur_len] = '\0';
++  result = cur_len ? cur_len : result;
++
++ unlock_return:
++  funlockfile (fp);
++  return result;
++}
+--- /dev/null	2011-02-01 15:10:32.641579002 -0500
++++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getdelim.h	2011-02-02 01:45:19.000000000 -0500
+@@ -0,0 +1,28 @@
++/* getdelim.h --- Prototype for replacement getdelim function.
++   Copyright (C) 2005 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or
++   modify it under the terms of the GNU General Public License as
++   published by the Free Software Foundation; either version 2, or (at
++   your option) any later version.
++
++   This program is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++   02110-1301, USA.  */
++
++/* Written by Simon Josefsson. */
++
++/* Get size_t, FILE, ssize_t.  And getdelim, if available.  */
++# include <stddef.h>
++# include <stdio.h>
++# include <sys/types.h>
++
++#if !HAVE_DECL_GETDELIM
++ssize_t getdelim (char **lineptr, size_t *n, int delimiter, FILE *stream);
++#endif /* !HAVE_GETDELIM */

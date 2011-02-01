@@ -1,0 +1,42 @@
+--- LVM2.2.02.79/configure.in	2010-12-13 05:43:56.000000000 -0500
++++ LVM2.2.02.79/configure.in	2011-02-01 20:40:58.000000000 -0500
+@@ -84,7 +84,7 @@
+ AC_HEADER_TIME
+ 
+ AC_CHECK_HEADERS([locale.h stddef.h syslog.h sys/file.h sys/time.h assert.h \
+-  langinfo.h libgen.h signal.h sys/mman.h sys/resource.h sys/utsname.h \
++  libgen.h signal.h sys/mman.h sys/resource.h sys/utsname.h \
+   sys/wait.h time.h], ,
+   [AC_MSG_ERROR(bailing out)])
+ 
+@@ -125,8 +125,8 @@
+ 
+ ################################################################################
+ dnl -- Check for functions
+-AC_CHECK_FUNCS([ftruncate gethostname getpagesize \
+-  gettimeofday memset mkdir mkfifo rmdir munmap nl_langinfo setenv setlocale \
++AC_CHECK_FUNCS([ftruncate gethostname \
++  gettimeofday memset mkdir rmdir munmap setenv setlocale \
+   strcasecmp strchr strcspn strspn strdup strncasecmp strerror strrchr \
+   strstr strtol strtoul uname], , [AC_MSG_ERROR(bailing out)])
+ AC_CHECK_FUNCS(siginterrupt)
+--- LVM2.2.02.79/Makefile.in	2010-11-22 16:39:47.000000000 -0500
++++ LVM2.2.02.79/Makefile.in	2011-02-01 21:11:57.000000000 -0500
+@@ -16,7 +16,7 @@
+ top_srcdir = @top_srcdir@
+ top_builddir = @top_builddir@
+ 
+-SUBDIRS = doc include man scripts
++SUBDIRS = include scripts
+ 
+ ifeq ("@UDEV_RULES@", "yes")
+   SUBDIRS += udev
+@@ -26,7 +26,7 @@
+   SUBDIRS += po
+ endif
+ 
+-SUBDIRS += lib tools daemons libdm
++SUBDIRS += libdm
+ 
+ ifeq ("@APPLIB@", "yes")
+   SUBDIRS += liblvm
