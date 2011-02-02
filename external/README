@@ -3,6 +3,18 @@ To build the whole shebang, run: make.  It'll download the sources, untar
 them, patch them, and set everything up, then build everything and install it
 into external/lib, external/include, etc.
 
+Build Products
+--------------
+
+The most interesting thing is probably: LUKS/external/sbin/cryptsetup.static
+
+You can actually see a little UNIX hierarchy once everything builds:
+LUKS/external/bin
+LUKS/external/include
+LUKS/external/lib
+LUKS/external/sbin
+LUKS/external/share
+
 
 Notes About This Build
 ----------------------
