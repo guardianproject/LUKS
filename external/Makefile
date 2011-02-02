@@ -20,7 +20,7 @@ PROJECT_ROOT = $(CWD)
 EXTERNAL_ROOT = $(PROJECT_ROOT)/external
 
 # Android NDK setup
-NDK_BASE = /usr/local/android-ndk
+#NDK_BASE =  /home/foo/android/ndk
 NDK_PLATFORM_LEVEL = 9
 NDK_SYSROOT=$(NDK_BASE)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-arm
 NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86

@@ -1,5 +1,5 @@
 --- cryptsetup-1.2.0/lib/utils.c	2010-11-15 10:37:46.000000000 -0500
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/lib/utils.c	2011-02-02 01:40:52.000000000 -0500
++++ cryptsetup-1.2.0/lib/utils.c	2011-02-02 01:40:52.000000000 -0500
 @@ -384,11 +384,13 @@
  {
  	if (!_memlock_count++) {
@@ -25,8 +25,8 @@
  		if (setpriority(PRIO_PROCESS, 0, _priority))
  			log_err(ctx, _("setpriority %u failed: %s"), _priority, strerror(errno));
  	}
---- cryptsetup-1.2.0/src/Makefile.am	2010-10-27 04:21:23.000000000 -0400
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/Makefile.am	2011-02-02 01:48:11.000000000 -0500
+--- /dev/null	2010-10-27 04:21:23.000000000 -0400
++++ cryptsetup-1.2.0/src/Makefile.am	2011-02-02 01:48:11.000000000 -0500
 @@ -11,6 +11,10 @@
  
  cryptsetup_SOURCES = \
@@ -39,7 +39,7 @@
  	cryptsetup.h
  
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getline.c	2011-02-02 01:45:11.000000000 -0500
++++ cryptsetup-1.2.0/src/getline.c	2011-02-02 01:45:11.000000000 -0500
 @@ -0,0 +1,32 @@
 +/* getline.c --- Implementation of replacement getline function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -74,7 +74,7 @@
 +  return getdelim (lineptr, n, '\n', stream);
 +}
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getline.h	2011-02-02 01:45:11.000000000 -0500
++++ cryptsetup-1.2.0/src/getline.h	2011-02-02 01:45:11.000000000 -0500
 @@ -0,0 +1,28 @@
 +/* getline.h --- Prototype for replacement getline function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -105,7 +105,7 @@
 +ssize_t getline (char **lineptr, size_t *n, FILE *stream);
 +#endif /* !HAVE_GETLINE */
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getdelim.c	2011-02-02 01:45:19.000000000 -0500
++++ cryptsetup-1.2.0/src/getdelim.c	2011-02-02 01:45:19.000000000 -0500
 @@ -0,0 +1,128 @@
 +/* getdelim.c --- Implementation of replacement getdelim function.
 +   Copyright (C) 1994, 1996, 1997, 1998, 2001, 2003, 2005 Free
@@ -236,7 +236,7 @@
 +  return result;
 +}
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ /home/hans/code/guardianproject/LUKS/external/cryptsetup-1.2.0/src/getdelim.h	2011-02-02 01:45:19.000000000 -0500
++++ cryptsetup-1.2.0/src/getdelim.h	2011-02-02 01:45:19.000000000 -0500
 @@ -0,0 +1,28 @@
 +/* getdelim.h --- Prototype for replacement getdelim function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
