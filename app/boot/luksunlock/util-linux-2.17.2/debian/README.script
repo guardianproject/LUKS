@@ -1,0 +1,38 @@
+Security hole in `script'
+-------------------------
+
+The BSD `script' utility included in the `bsdutils' package is not
+installed setuid root, and was not written to be.  Sometimes the tty
+`script' allocates is already owned by the appropriate user, in which
+case there will be no problem.  In other cases, `script' will not be
+able to set the ownership or mode of the pty/tty pair it allocates,
+and so it cannot prevent other processes reading or writing to the tty.
+
+The result of this is a security hole: during such a `script' session,
+other users can read keystrokes from your tty, or write to your terminal,
+without any warning or explicit authorisation.  This means that any
+password(s) or other sensitive data you enter during such a `script'
+session are not secure against snooping, even if they are (properly)
+not echoed to the screen.
+
+To protect against this, `script' tries to detect whether the tty
+allocated for it by the C library's openpty() function is secure
+against snooping.  If it detects that there is a problem, `script'
+issues a warning.  If you see this warning, you should not enter any
+sensitive data during the script session, and you should not trust the
+output displayed, or that recorded in the `typescript' file, to be free
+from tampering.
+
+This bug is due to a long-standing design flaw in UNIX, and is to be cured
+shortly by the introduction of the UNIX98-style pty system supported
+by GLIBC 2.1 and Linux 2.2.  The UNIX98-style pty system makes use of
+kernel support to create slave devices on the fly, with the correct
+ownership and permissions already in place.  This allows unprivileged
+user programs to allocate pty/tty pairs securely, and eliminates the
+race conditions currently present in pty allocation.
+
+When `script' is used on a system with UNIX98-style pty support in
+the kernel and in libc, `script' will detect that its tty is secure,
+and will not display the warning.
+
+Charles Briscoe-Smith <cpbs@debian.org>  Wed,  9 Dec 1998 13:32:49 +0000

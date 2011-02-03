@@ -1,0 +1,68 @@
+hwclock and Debian:
+
+When udev is running, hwclock -systz will be called when the RTC clock
+device is created.  When udev is not running, hwclock --hctosys will be
+called during system startup.
+
+In both cases, hwclock --systohc will be called during system shutdown.
+
+To set the date/time of the system, just use the standard UNIX date facilities
+(such as date) or any of the advanced timekeeping utilities (ntp, ntpdate,
+chrony). Other methods of setting the clock (such as hwclock) are likely to 
+cause trouble, do not use them.
+
+Please note that because the shutdown scripts call hwclock --systohc, you
+cannot set the clock using hwclock only, as your adjustment will be lost on
+the next reboot. THIS MEANS YOU MUST *NOT* FOLLOW THE PROCEDURES IN THE
+hwclock(8) MAN PAGE TO SET THE CLOCK DATE/TIME USING A REBOOT UNLESS YOU
+EDIT THE SHUTDOWN SCRIPTS.
+
+
+The full story:
+
+A Linux system actually has two clocks:
+
+ - The System Clock, kept by the kernel. This is the clock that Linux uses for
+   day-to-day activities, and this is also the clock you set using date.
+
+ - The Hardware Clock, also called RTC, which is used as a backup to keep time 
+   while the computer is turned off, or in APM suspended state. This is the
+   clock you set using hwclock --set.
+
+(you can get more information about these two clocks in the hwclock(8) man
+page).
+
+hwclock is used to copy time between these two clocks. For the Debian
+standard install, the system clock is initialized with the value of the
+hardware clock during startup, and the value of the system clock is copied
+back to the hardware clock during system shutdown/reboot.
+
+So, in a Debian default install, you can keep the illusion that there's a
+single clock. Unless you use a program that modifies the hardware clock
+directly and does not set the system clock as well, that is.
+
+
+Issues with hwclock --adjust:
+
+hwclock has a facility to try to correct for systematic drift in the
+hardware clock, accessed by hwclock --adjust. This facility is *dangerous*
+because it has a severe drawback: it assumes that no program other than
+hwclock --systohc will ever be used to change the hardware clock.
+
+This assumption is often false, as many common utilities such as ntp,
+chrony, as well as your computer's System Setup BIOS program, and
+any other OS you have in your machine will change the clock.
+
+Also, if hwclock --adjust is used, one must make sure the drift file
+(/etc/adjtime) is deleted every time the system clock is set to a very
+different value (even if you're using hwclock itself to do it!), or the
+drift computation might become invalid and cause the hardware clock to be
+incorrectly set the next time hwclock --adjust is used.
+
+hwclock currently does not perform any sort of sanity checks in the values
+it uses to compute the drift file, and will corrupt your clock time by
+potentially very large amounts if anything goes wrong.
+
+Don't use the hwclock --adjust facility, refer to alternate (and much safer)
+programs such as ntp or chrony if you need precision timekeeping.
+

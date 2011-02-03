@@ -1,0 +1,10 @@
+bin/
+sbin/
+usr/
+usr/share/
+usr/share/man/
+usr/share/man/man8/
+usr/share/man/man5/
+usr/share/doc/
+usr/share/doc/mount/
+usr/share/doc/mount/examples/

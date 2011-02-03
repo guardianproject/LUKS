@@ -1,0 +1,71 @@
+isnull.lo: isnull.c ../../../config.h uuidP.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/inttypes.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/sys/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/posix_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stddef.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/compiler.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/posix_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/kernel.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysmacros.h \
+ uuid.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/time.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/time.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/time.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/siginfo.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/siginfo.h
+
+../../../config.h:
+
+uuidP.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/inttypes.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/sys/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/posix_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stddef.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/compiler.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/posix_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/kernel.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysmacros.h:
+
+uuid.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/time.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/time.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/time.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/siginfo.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/siginfo.h:

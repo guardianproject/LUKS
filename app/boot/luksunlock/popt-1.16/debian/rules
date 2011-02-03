@@ -1,0 +1,156 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DEB_HOST_GNU_TYPE	:= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE      := $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+CROSS= --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+else
+CROSS= --build $(DEB_BUILD_GNU_TYPE)
+endif
+
+# shared library versions, option 1
+source = $(shell grep "^Source: " debian/control|head -1|sed 's/Source: \(.*\)/\1/g')
+
+version = $(shell grep "^$(source) " debian/changelog|head -1 |sed 's/.*(\(.*\)\-[^\-]*).*/\1/g')
+
+major=0
+
+# Work around past library brokenness
+ifeq ($(version),1.7)
+ifeq ($(DEB_HOST_ARCH),m68k)
+version = 1.7-4
+endif
+endif
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+cflags = -O0 -Wall -W -g -D_GNU_SOURCE -D_REENTRANT
+else
+cflags = -O2 -Wall -W -g -D_GNU_SOURCE -D_REENTRANT
+endif
+cflags_udeb = -Os -Wall -W -g -D_GNU_SOURCE -D_REENTRANT
+
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+install = install
+else
+install = install-strip
+endif
+
+objdir = $(CURDIR)/obj-$(DEB_HOST_GNU_TYPE)
+objdir_udeb = $(objdir)-udeb
+
+configure: configure-deb-stamp configure-udeb-stamp
+configure-deb-stamp:
+	dh_testdir
+	# make build dir
+	mkdir $(objdir)
+	# Add here commands to configure the package.
+	cd $(objdir) && \
+	../configure --prefix=/usr --mandir=/usr/share/man --enable-shared $(CROSS)
+	touch $@
+
+configure-udeb-stamp:
+	dh_testdir
+	# make build dir
+	mkdir $(objdir_udeb)
+	# Add here commands to configure the package.
+	cd $(objdir_udeb) && \
+	../configure --prefix=/usr --mandir=/usr/share/man --enable-shared $(CROSS)
+	touch $@
+
+build: build-arch-deb-stamp build-arch-udeb-stamp
+
+build-arch-deb-stamp: configure-deb-stamp
+	dh_testdir
+	cd $(objdir) && $(MAKE) CFLAGS="$(cflags)"
+	touch $@
+
+build-arch-udeb-stamp: configure-udeb-stamp
+	dh_testdir
+	cd $(objdir_udeb) && $(MAKE) CFLAGS="$(cflags_udeb)"
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp config.log
+	rm -f config.log
+	rm -f build-arch-deb-stamp build-arch-udeb-stamp
+	rm -f configure-deb-stamp configure-udeb-stamp
+	rm -f po/*.gmo po/stamp-po
+	
+	# Remove build trees
+	rm -rf $(objdir) $(objdir_udeb)
+
+	# Remove install dirs
+	rm -rf $(CURDIR)/debian/tmp $(CURDIR)/debian/tmp-udeb
+
+	# Add here commands to clean up after the build process.
+	[ ! -f Makefile ] || $(MAKE) distclean
+
+	dh_clean
+	rm -rf $(CURDIR)/tmp
+
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+        # Main install
+	cd $(objdir) && \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	# udeb install
+	cd $(objdir_udeb) && \
+		$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp-udeb
+
+	# Move the udeb library to /lib or /lib64
+	mkdir $(CURDIR)/debian/tmp-udeb/lib/
+	mv $(CURDIR)/debian/tmp-udeb/usr/lib*/libpopt.so.* \
+		$(CURDIR)/debian/tmp-udeb/lib/
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+
+	dh_install --list-missing
+#	dh_installdebconf	
+	dh_installdocs
+	dh_installexamples
+#	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+#	dh_installcron
+	dh_installman
+#	dh_installinfo
+#	dh_undocumented
+	dh_installchangelogs CHANGES
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs -V "libpopt0 (>= $(version))" -plibpopt0 --add-udeb="libpopt0-udeb"
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure 

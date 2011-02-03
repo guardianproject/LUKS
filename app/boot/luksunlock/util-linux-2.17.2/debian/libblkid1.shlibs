@@ -1,0 +1,2 @@
+libblkid 1 libblkid1 (>= 2.16)
+udeb: libblkid 1 libblkid1-udeb (>= 2.16)

@@ -1,0 +1,9 @@
+bin/
+usr/
+usr/bin/
+usr/share/
+usr/share/man/
+usr/share/man/man8/
+usr/share/man/man1/
+usr/share/doc/
+usr/share/doc/bsdutils/

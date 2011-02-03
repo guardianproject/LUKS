@@ -1,0 +1,11 @@
+bin/mount
+bin/umount
+sbin/swapon
+sbin/losetup
+usr/share/man/man8/swapoff.8
+usr/share/man/man8/umount.8
+usr/share/man/man8/swapon.8
+usr/share/man/man8/losetup.8
+usr/share/man/man8/mount.8
+usr/share/man/man5/fstab.5
+sbin/swapoff

@@ -1,0 +1,35 @@
+#! /bin/sh
+
+set -e
+
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+	if [ -e "/etc/udev/rules.d/85-hwclock.rules" ]; then
+		if [ "`md5sum \"/etc/udev/rules.d/85-hwclock.rules\" | sed -e \"s/ .*//\"`" = \
+		     "`dpkg-query -W -f='${Conffiles}' util-linux | sed -n -e \"\\\\' /etc/udev/rules.d/85-hwclock.rules's/.* //p\"`" ]
+		then
+			rm -f "/etc/udev/rules.d/85-hwclock.rules"
+		fi
+	fi
+
+	if [ -e "/etc/init.d/hwclock.sh" ]; then
+		if [ "`md5sum \"/etc/init.d/hwclock.sh\" | sed -e \"s/ .*//\"`" = \
+		     "`dpkg-query -W -f='${Conffiles}' util-linux | sed -n -e \"\\\\' /etc/init.d/hwclock.sh's/.* //p\"`" ]
+		then
+			rm -f "/etc/init.d/hwclock.sh"
+		else
+			mv "/etc/init.d/hwclock.sh" "/etc/init.d/hwclock.sh.dpkg-obsolete"
+		fi
+	fi
+
+	if [ -e "/etc/init.d/hwclockfirst.sh" ]; then
+		if [ "`md5sum \"/etc/init.d/hwclockfirst.sh\" | sed -e \"s/ .*//\"`" = \
+		     "`dpkg-query -W -f='${Conffiles}' util-linux | sed -n -e \"\\\\' /etc/init.d/hwclockfirst.sh's/.* //p\"`" ]
+		then
+			rm -f "/etc/init.d/hwclockfirst.sh"
+		else
+			mv "/etc/init.d/hwclockfirst.sh" "/etc/init.d/hwclockfirst.sh.dpkg-obsolete"
+		fi
+	fi
+fi
+
+#DEBHELPER#

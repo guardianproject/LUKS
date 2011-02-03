@@ -1,0 +1,52 @@
+.\" Written by Andries E. Brouwer (aeb@cwi.nl)
+.\" Placed in the public domain
+.\"
+.TH RENAME 1 "1 January 2000" "" "Linux Programmer's Manual"
+.SH NAME
+rename \- Rename files
+.SH SYNOPSIS
+.B rename
+.IR  "from to file" ...
+.br
+.B rename -V
+.SH DESCRIPTION
+.B rename
+will rename the specified files by replacing the first occurrence of
+.I from
+in their name by
+.IR to .
+
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+
+For example, given the files
+.IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
+the commands
+
+.RS
+.nf
+rename foo foo0 foo?
+rename foo foo0 foo??
+.fi
+.RE
+
+will turn them into
+.IR foo001 ", ..., " foo009 ", " foo010 ", ..., " foo278 .
+
+And
+.RS
+.nf
+rename .htm .html *.htm
+.fi
+.RE
+
+will fix the extension of your html files.
+
+.SH "SEE ALSO"
+.BR mmv (1),
+.BR mv (1)
+.SH AVAILABILITY
+The rename command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.

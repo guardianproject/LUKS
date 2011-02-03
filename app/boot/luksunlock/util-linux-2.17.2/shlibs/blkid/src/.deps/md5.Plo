@@ -1,0 +1,36 @@
+md5.lo: ../../../lib/md5.c ../../../config.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/endian.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/endian.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/string.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/malloc.h \
+ ../../../include/md5.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h
+
+../../../config.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/endian.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/endian.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/string.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/malloc.h:
+
+../../../include/md5.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h:

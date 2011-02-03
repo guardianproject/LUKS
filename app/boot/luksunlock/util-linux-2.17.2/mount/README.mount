@@ -1,0 +1,11 @@
+mount/umount for Linux 0.97.3 and later.
+Authors:
+Doug Quale <quale@saavik.cs.wisc.edu>,
+H.J. Lu <hlu@eecs.wsu.edu>,
+Rick Sladkey <jrs@world.std.com>,
+Stephen Tweedie <sct@dcs.ed.ac.uk>.
+Andries Brouwer <aeb@cwi.nl>
+Adrian Bunk <bunk@stusta.de>
+
+Presently in util-linux-ng maintained by Karel Zak <kzak@redhat.com>. 
+

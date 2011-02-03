@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+if [ -L /usr/doc/mount ] ; then
+        rm -f /usr/doc/mount
+fi
+
+#DEBHELPER#

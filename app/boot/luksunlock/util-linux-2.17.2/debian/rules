@@ -1,0 +1,213 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DISTRO :=$(shell lsb_release -is 2>/dev/null || echo Debian)
+
+DEB_HOST_GNU_TYPE=$(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE=$(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+CROSS= --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE) --cache-file=$(DEB_HOST_GNU_TYPE).cache
+else
+CROSS=
+endif
+
+ifneq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+STRIP=y
+endif
+
+ifndef DEB_HOST_ARCH
+DEB_BUILD_ARCH := $(shell dpkg --print-installation-architecture)
+DEB_HOST_ARCH = $(DEB_BUILD_ARCH)
+endif
+
+ifndef DEB_HOST_ARCH_OS
+DEB_HOST_ARCH_OS := $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+endif
+
+export arch = $(DEB_HOST_ARCH)
+version := $(shell sed -e '1{;s|^util-linux (\(.*\))\ .*|\1|;q;}' debian/changelog)
+Upstream := $(shell sed 's/^.*(\(.*\)-.*).*/\1/; q' debian/changelog)
+
+CONFOPTS= --enable-raw --enable-partx --with-slang
+ifneq ($(DEB_HOST_ARCH_OS),hurd)
+CONFOPTS += --enable-rdev
+endif
+ifeq ($(DEB_HOST_ARCH_OS),linux)
+CONFOPTS += --with-selinux
+endif
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+	./configure $(CONFOPTS) $(CROSS)
+	$(MAKE) all CPU=$(arch) arch=$(arch)
+	touch build-stamp
+
+autofiles:
+	AM_OPTS=--copy ./autogen.sh
+	rm -rf autom4te.cache
+
+clean-preunpatch: 
+	dh_testdir
+	dh_testroot
+	dh_clean
+	test ! -d ${base} || rm -rf ${base}
+	-$(MAKE) distclean
+
+clean: clean-preunpatch
+	find . -name \*.o -exec rm {} \;
+	rm -f build-stamp
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	$(MAKE) install DESTDIR=`pwd`/debian/util-linux INSTALL_STRIP_FLAG=""
+	dh_installdocs -i -s
+	install -m 644 login-utils/README.modems-with-agetty debian/util-linux/usr/share/doc/util-linux/README.modems-with-getty
+ifeq ($(DISTRO),Debian)
+	install -m 755 debian/util-linux.initramfs debian/util-linux/usr/share/initramfs-tools/hooks/utillinux
+endif
+	dh_installexamples -i -s
+	dh_installmenu -i -s
+	dh_installcron -i -s
+	dh_installinfo -i -s
+	dh_installchangelogs docs/v*-ReleaseNotes -i -s
+	dh_movefiles --sourcedir=debian/util-linux -i -s
+	#
+	# XXX - push things to where debian has always(?) had them...
+ifeq ($(DEB_HOST_ARCH_OS),linux)
+	mv debian/util-linux/usr/sbin/*part* debian/util-linux/usr/bin
+	mv debian/util-linux/usr/bin/cytune debian/util-linux/usr/sbin
+endif
+	mv debian/util-linux/usr/bin/tailf debian/util-linux/bin
+	mv debian/util-linux/usr/bin/isosize debian/util-linux/sbin
+	mv debian/util-linux/usr/share/man/man8/linux32.8 debian/util-linux/usr/share/man/man1/linux32.1
+	mv debian/util-linux/usr/share/man/man8/linux64.8 debian/util-linux/usr/share/man/man1/linux64.1
+	# the version in bsdmainutils seems newer.
+	rm -f debian/bsdutils/usr/bin/look debian/bsdutils/usr/share/man/man1/look.1
+	rm -f debian/bsdutils/usr/bin/hexdump debian/bsdutils/usr/share/man/man1/hexdump.1
+	# and it's less pain to just let bsmainutils deliver col for now.
+	rm -f debian/bsdutils/usr/bin/col* debian/bsdutils/usr/share/man/man1/col*.1
+	rm -f debian/bsdutils/usr/bin/ul debian/bsdutils/usr/share/man/man1/ul*.1
+	rm -f debian/bsdutils/usr/bin/cal debian/bsdutils/usr/share/man/man1/cal.1
+	# remove *.la files and empty directories which do not belong into util-linux
+	rm -f debian/util-linux/usr/lib/*.la
+	rm -rf debian/util-linux/usr/include
+	rm -rf debian/util-linux/usr/lib/pkgconfig
+	# perl gets to do rename, not us.
+	mv debian/util-linux/usr/bin/rename debian/util-linux/usr/bin/rename.ul
+	mv debian/util-linux/usr/share/man/man1/rename.1 debian/util-linux/usr/share/man/man1/rename.ul.1
+	rm -f debian/util-linux/usr/share/info/dir
+	#
+	#
+	mv debian/util-linux/usr/share/getopt/* debian/util-linux/usr/share/doc/util-linux/examples
+	rmdir  debian/util-linux/usr/share/getopt
+	install -m 644 debian/lintian-override debian/util-linux/usr/share/lintian/overrides/util-linux
+	install -m 644 debian/mime.util-linux debian/util-linux/usr/lib/mime/packages/util-linux
+ifeq ($(DISTRO),Debian)
+	if [ -f debian/util-linux/sbin/hwclock ] ; then \
+	    install -m 755 debian/hwclock.sh debian/util-linux/etc/init.d/hwclock.sh; \
+	    install -m 755 debian/hwclock.sh debian/util-linux/etc/init.d/hwclockfirst.sh; \
+	    sed -i -e '/^FIRST=/s/no/yes/' -e '/Provides:/s/ck/ckfirst/' \
+		-e '/Required-Start:/s/checkroot/mountdevsubfs/' \
+		-e '/Required-Start:/a# Required-Stop:' -e '/Required-Stop:/d' \
+		-e '/Default-Start:/a# X-Start-Before:    checkroot' \
+		-e '/Default-Start:/a# Default-Stop:' -e '/Default-Stop:/d' \
+		debian/util-linux/etc/init.d/hwclockfirst.sh; \
+	fi
+	if [ -f debian/util-linux/sbin/hwclock ] ; then \
+	    install -m 644 debian/hwclock.rules debian/util-linux/lib/udev/rules.d/85-hwclock.rules; \
+	    install -m 755 debian/hwclock-set debian/util-linux/lib/udev/hwclock-set; \
+	fi
+else
+	# blkid.conf file and blkid.tab symlink
+	install -m 644 debian/blkid.conf debian/libblkid1/etc/
+	ln -s /dev/.blkid.tab debian/libblkid1/etc/blkid.tab
+endif
+	# copy blkid library and symlink into udeb
+	ln debian/libblkid1/lib/libblkid.so.1.* debian/libblkid1-udeb/lib/
+	ln debian/libblkid1/lib/libblkid.so.1   debian/libblkid1-udeb/lib/
+	ln debian/util-linux/sbin/blkid debian/util-linux-udeb/sbin/
+	# overwrite copyright
+	install -m 644 debian/libblkid.copyright debian/libblkid1/usr/share/doc/libblkid1/copyright
+	install -m 644 debian/libblkid.copyright debian/libblkid-dev/usr/share/doc/libblkid-dev/copyright
+	# copy uuid library and symlink into udeb
+	ln debian/libuuid1/lib/libuuid.so.1.* debian/libuuid1-udeb/lib/
+	ln debian/libuuid1/lib/libuuid.so.1   debian/libuuid1-udeb/lib/
+	# overwrite copyright
+	install -m 644 debian/libuuid.copyright debian/libuuid1/usr/share/doc/libuuid1/copyright
+	install -m 644 debian/libuuid.copyright debian/uuid-dev/usr/share/doc/uuid-dev/copyright
+	install -m 644 debian/libuuid.copyright debian/uuid-runtime/usr/share/doc/uuid-runtime/copyright
+	#
+	cd debian; if [ -f util-linux/sbin/fdisk ]; then \
+	    ln util-linux/sbin/*fdisk fdisk-udeb/usr/sbin/; \
+	    S=fdisk-udeb/usr/sbin/cfdisk; if [ -f $$S ]; then mv $$S cfdisk-udeb/usr/sbin/; fi; \
+	fi
+	cd debian/util-linux-locales && find usr/share/locale -type f | while read x; do ln $$x ../cfdisk-udeb/$$x; done
+ifeq ($(DEB_HOST_ARCH_OS),linux)
+	install -m 644 debian/mount.fstab debian/mount/usr/share/doc/mount/examples/fstab
+ifeq ($(arch),$(findstring $(arch),powerpc ppc64))
+	mv -f debian/util-linux/sbin/fdisk debian/util-linux/sbin/ddisk
+	mv -f debian/util-linux/usr/share/man/man8/fdisk.8 debian/util-linux/usr/share/man/man8/ddisk.8
+else
+	cd debian/util-linux && if [ -f sbin/hwclock ] ; then ln -sf hwclock.8.gz usr/share/man/man8/clock.8.gz; fi
+endif
+endif
+ifneq ($(DEB_HOST_ARCH_OS),hurd)
+	cd debian/util-linux/sbin ; mv agetty getty
+	cd debian/util-linux/usr/share/man/man8 ; mv agetty.8 getty.8
+	perl -pi.bak -e 's/agetty/getty/g' debian/util-linux/usr/share/man/man8/getty.8 \
+		  debian/util-linux/usr/share/doc/util-linux/README.*
+	rm `find debian/util-linux/usr -name \*.bak`
+endif
+ifneq ($(DEB_HOST_ARCH_OS),linux)
+	cd debian/util-linux/sbin ; mv mkswap mkswap.linux
+	cd debian/util-linux/usr/share/man/man8 ; mv mkswap.8 mkswap.linux.8
+endif
+	dh_compress -i -s
+	dh_fixperms -i -s -Xusr/bin/wall -Xbin/mount -Xbin/umount
+	rm -rf debian/*-udeb/usr/share/doc
+	dh_link -i -s
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+	dh_testdir -i
+	dh_testroot -i
+	dh_installdeb -i
+	dh_gencontrol -i -- -VUpstream=$(Upstream)
+	dh_md5sums -i
+	dh_builddeb -i
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir -s
+	dh_testroot -s
+ifeq ($(DISTRO),Debian)
+	dh_installinit -s -- defaults 15 85
+else
+	dh_installinit -putil-linux --name=hwclock --no-start
+	dh_installinit -putil-linux --name=hwclock-save --upstart-only --no-start
+endif
+	[ -n "$(STRIP)" ] || dh_strip -s
+	dh_makeshlibs -s
+	dh_installdeb -s
+	dh_shlibdeps -s
+ifeq ($(DEB_HOST_ARCH_OS),hurd)
+	echo util-linux:Conflicts=getty >> debian/util-linux.substvars
+endif
+	dh_gencontrol -s -Xbsdutils
+	dh_gencontrol -pbsdutils -u-v1:$(version)
+	dh_md5sums -s
+	rm -f debian/*-udeb/DEBIAN/md5sums
+	dh_builddeb -s
+
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

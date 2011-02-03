@@ -1,0 +1,2 @@
+debian/tmp/usr/lib*/libpopt.so.*				lib
+debian/tmp/usr/share/locale/*/LC_MESSAGES/popt.mo

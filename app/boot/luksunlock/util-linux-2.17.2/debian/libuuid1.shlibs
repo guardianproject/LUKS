@@ -1,0 +1,2 @@
+libuuid 1 libuuid1 (>= 2.16)
+udeb: libuuid 1 libuuid1-udeb (>= 2.16)

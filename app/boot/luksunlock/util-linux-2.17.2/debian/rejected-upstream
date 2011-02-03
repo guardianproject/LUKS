@@ -1,0 +1,76 @@
+Date: Sun, 1 Jul 2001 18:19:00 +0200 (CEST)
+From: Adrian Bunk <bunk@fs.tum.de>
+To: util-linux@math.uio.no
+Subject: [patch] setterm -{dump,append} don't work on current virtual console
+
+Hi Andries,
+
+Colin Watson <cjw44@cam.ac.uk> reported the following Problem:
+
+<--  snip  -->
+
+When 'setterm -dump' or 'setterm -append' is called without further
+arguments, it tries to dump the current virtual console, using
+/dev/vcsa0. Unfortunately, according to the Linux Device List, the
+current virtual console text/attribute contents are on /dev/vcsa.
+
+<--  snip  -->
+
+He sent the following patch:
+
+--- util-linux-2.11g.orig/misc-utils/setterm.c
++++ util-linux-2.11g/misc-utils/setterm.c
+@@ -1115,7 +1115,10 @@
+     int fd, i, j;
+     char *inbuf, *outbuf, *p, *q;
+
+-    sprintf(infile, "/dev/vcsa%d", vcnum);
++    if (vcnum > 0)
++       sprintf(infile, "/dev/vcsa%d", vcnum);
++    else
++       sprintf(infile, "/dev/vcsa");
+     fd = open(infile, 0);
+     if (fd < 0 || read(fd, header, 4) != 4)
+       goto try_ioctl;
+
+cu
+Adrian
+
+-- 
+A "No" uttered from deepest conviction is better and greater than a
+"Yes" merely uttered to please, or what is worse, to avoid trouble.
+                -- Mahatma Ghandi
+
+
+
+
+Date: Sun, 1 Jul 2001 20:31:21 +0200 (MET DST)
+From: Andries.Brouwer@cwi.nl
+To: bunk@fs.tum.de, util-linux@math.uio.no
+Cc: cjw44@cam.ac.uk, hpa@transmeta.com
+Subject: Re: [util-linux] [patch] setterm -{dump,
+    append} don't work on current virtual console
+
+    From: Adrian Bunk <bunk@fs.tum.de>
+
+    Colin Watson <cjw44@cam.ac.uk> reported the following Problem:
+
+    When 'setterm -dump' or 'setterm -append' is called without further
+    arguments, it tries to dump the current virtual console, using
+    /dev/vcsa0. Unfortunately, according to the Linux Device List, the
+    current virtual console text/attribute contents are on /dev/vcsa.
+
+I don't think I'll make this change.
+
+There are several machines here with /dev/vcsa0 and without /dev/vcsa.
+So making this change would certainly give slight problems.
+
+One could test both, but I prefer to leave the code as it is.
+I consider the Linux Device List broken in this respect -
+the vcs naming is exactly analogous to the tty naming, with tty0
+on the same major as tty1, and there was no need to change anything.
+
+Andries
+
+[Let me cc hpa]
+[A distribution should make both nodes, just to be on the safe side.]

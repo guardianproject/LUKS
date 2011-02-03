@@ -1,0 +1,168 @@
+mount (2.8a-1.2) frozen unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Update lineno when reading fstab
+  * Cope with systems that don't have a newline on the last line of
+    /etc/fstab (Fixes#29282)
+
+ -- Anthony Towns <ajt@debian.org>  Wed, 11 Nov 1998 23:53:24 +1000
+
+mount (2.8a-1.1) unstable; urgency=low
+
+  * Non-maintainer upload with permision by Vincent
+  * Fixed wrong while loop that caused too many lines to be ignored.  The
+    code for the whole condition is generated with all variables replaced
+    by their values as they were when the condition was entered.  This
+    means that if one uses variable assignments, the variable to which a
+    new value was assigned still contains the old value later in the same
+    condition.  Thanks to Peter Moulder <reiter@netspace.net.au (fixes:
+    Bug#27421)
+  * Applied patch by James Troup <james@nocrew.org> that prevents mount
+    from crashing when an empty argument list is used with `-t'.  (fixes:
+    Bug#27130)
+
+ -- Martin Schulze <joey@finlandia.infodrom.north.de>  Wed, 14 Oct 1998 23:11:14 +0200
+
+mount (2.8a-1) unstable; urgency=low
+
+  * New upstream version (Bug #26686).
+
+ -- Vincent Renardias <vincent@waw.com>  Wed, 23 Sep 1998 18:05:44 +0200
+
+mount (2.7l-5) frozen unstable; urgency=low
+
+  * Applied Roman Hodek's patch so the package now builds with stock libc6-dev
+    (This patch seems badly needed by m68k folks)
+    Fix bugs #22037, #14767, #15341, #22037.
+
+ -- Vincent Renardias <vincent@waw.com>  Mon,  8 Jun 1998 17:08:52 +0200
+
+mount (2.7l-4) unstable; urgency=low
+
+  * Fix to allow compilation on sparc
+    (Bug #21510, patch from Eric Delaunay <delaunay@lix.polytechnique.fr>)
+
+ -- Vincent Renardias <vincent@waw.com>  Thu, 23 Apr 1998 20:26:49 +0200
+
+mount (2.7l-3) unstable; urgency=low
+
+  * updated swapon(8) manpage.
+
+ -- Vincent Renardias <vincent@waw.com>  Fri, 17 Apr 1998 01:56:43 +0200
+
+mount (2.7l-2) unstable; urgency=low
+
+  * Update to debian std 2.4.0.0.
+  * Corrected snafu with md5sums (Bugs #19369, #18682).
+
+ -- Vincent Renardias <vincent@waw.com>  Sat, 14 Mar 1998 18:33:02 +0100
+
+mount (2.7l-1) unstable; urgency=low
+
+  * New upstream release (Bug #17745, Said to fix #17523).
+  * Apply the usual patches to get it to compile under libc6 *sigh*.
+  * Removed dependency on libc6 (already Pre-Depends:): Bug #18245.
+  * Remove doubled example in example fstab (Bug #16889).
+
+ -- Vincent Renardias <vincent@waw.com>  Tue, 17 Feb 1998 20:10:55 +0100
+
+mount (2.7g-2) unstable; urgency=low
+
+  * Recompile with kernel 2.0.32 headers so the option noatime works
+    (Bug #15304).
+  * compress changelog.Debian (Bug #15430).
+
+ -- Vincent Renardias <vincent@waw.com>  Thu, 18 Dec 1997 04:39:22 +0100
+
+mount (2.7g-1) unstable; urgency=low
+
+  * New upstream version:
+    - 'mount -aF': This will do the mounts on different devices
+       or different NFS servers in parallel.  (Fix Bug #?????)
+  * mount.c: patch to get it compile with DO_PS_FIDDLING.
+  * patch to get 'swapon -s' error messages more explicit.
+  * improved debian/rules cleanup rule.
+
+ -- Vincent Renardias <vincent@waw.com>  Sat, 13 Dec 1997 17:53:46 +0100
+
+mount (2.7f-1) unstable; urgency=low
+
+  * New upstream version (Bug #14585).
+  * Corrected documentation buglet (Bugs #13050, #14015).
+
+ -- Vincent Renardias <vincent@waw.com>  Sun, 9 Nov 1997 03:50:27 +0100
+
+mount (2.6g-2) unstable; urgency=low
+
+  * Rebuilt with libc6.
+
+ -- Vincent Renardias <vincent@waw.com>  Sat, 21 Jun 1997 17:26:47 +0200
+
+mount (2.6g-1) unstable; urgency=low
+
+  * Upstream upgrade.
+
+ -- Vincent Renardias <vincent@waw.com>  Thu, 1 May 1997 13:50:09 +0200
+
+mount (2.6d-2) unstable; urgency=low
+
+  * Included Patch from M. Dorman for glibc support (Bug #8810).
+
+ -- Vincent Renardias <vincent@waw.com>  Fri, 18 Apr 1997 20:40:17 +0200
+
+mount (2.6d-1) unstable; urgency=low
+
+  * New upstream source
+    (includes the patch I made to fix Bug #4289)
+
+ -- Vincent Renardias <vincent@waw.com>  Sat, 8 Mar 1997 23:29:53 +0100
+
+mount (2.6c-0.1) unstable; urgency=low
+
+  * Patched swapon.c to fix bug #4289:
+    'swapon -s' now gives a summary of mounted partitions.
+
+ -- Vincent Renardias <vincent@waw.com>  Tue, 18 Feb 1997 04:05:31 +0100
+
+mount (2.6c-0) unstable; urgency=low
+
+  * Upstream upgrade requested to author to fix bug #5498.
+  * it also appears to fix bug #7428, cool...
+
+ -- Vincent Renardias <vincent@waw.com>  Tue, 18 Feb 1997 02:22:11 +0100
+
+mount (2.6b-0.1) unstable; urgency=low
+
+  * Added 'Essential: yes' into debian/control.
+
+ -- Vincent Renardias <vincent@waw.com>  Sun, 16 Feb 1997 07:53:36 +0100
+
+mount (2.6b-0) unstable; urgency=low
+
+  * Upstream upgrade.
+  * Now users can umount user mounts (Fixes bug #3993).
+
+ -- Vincent Renardias <vincent@waw.com>  Sun, 16 Feb 1997 00:26:22 +0100
+
+mount (2.5p-1.2) unstable; urgency=low
+
+  * Corrected source package (Can now be extracted with
+    'dpkg-source -x').
+  * Changed 'Depends' into 'Pre-depends' on libc5.
+
+ -- Vincent Renardias <vincent@waw.com>  Sat, 15 Feb 1997 22:31:29 +0100
+
+mount (2.5p-1.1) unstable; urgency=low
+
+  * Just an interim release, the real maintainer is
+    Robert Leslie <rob@mars.org>
+  * Converted to the new package format (Fixes bug #7114).
+  * Corrected bug #6315: compressed man pages,
+    added '/usr/doc/mount/copyright' file,
+    moved examples to '/usr/doc/mount/examples'.
+
+ -- Vincent Renardias <vincent@waw.com>  Sun, 9 Feb 1997 22:08:56 +0100
+
+Local variables:
+mode: debian-changelog
+End:

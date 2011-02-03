@@ -1,0 +1,9 @@
+popt for Debian
+---------------
+
+Because of its non-free license, the postscript documentation for popt has
+been removed.  man 3 popt will still give you pretty good information on how
+to use popt in your programs.  Sorry about the inconvenience, but you can
+always email Erik Troan about it if the manpage isn't useful to you.  =>
+
+ -- Joseph Carter <knghtbrd@debian.org>  Thu, 29 Jul 1999 04:56:36 -0700

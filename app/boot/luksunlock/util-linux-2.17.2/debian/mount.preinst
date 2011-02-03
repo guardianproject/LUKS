@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+# Debian mount preinst
+# LaMont Jones <lamont@debian.org>
+
+chrooted() {
+  if [ "$(stat -c %d/%i /)" = "$(stat -Lc %d/%i /proc/1/root 2>/dev/null)" ]; then
+      # the devicenumber/inode pair of / is the same as that of /sbin/init's
+      # root, so we're *not* in a chroot and hence return false.
+      return 1
+  fi
+  return 0
+}
+
+case "$1" in
+    install)
+	;;
+
+    upgrade)
+	;;
+
+    abort-upgrade)
+	;;
+
+    *)
+	echo "preinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
+esac
+
+
+#DEBHELPER#

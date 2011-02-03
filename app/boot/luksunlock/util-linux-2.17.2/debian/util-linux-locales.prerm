@@ -1,0 +1,16 @@
+#! /bin/sh
+
+set -e
+
+case "$1" in
+	remove)
+		if [ -L /usr/doc/util-linux-locales ] ; then
+        		rm -f /usr/doc/util-linux-locales
+		fi
+		;;
+	upgrade|failed-upgrade|deconfigure)
+		;;
+esac
+
+
+#DEBHELPER#

@@ -1,0 +1,58 @@
+Source: popt
+Section: devel
+Priority: optional
+Maintainer: Paul Martin <pm@debian.org>
+Build-Depends: debhelper (>> 7), gettext, quilt
+Homepage: http://rpm5.org/
+Standards-Version: 3.8.4
+
+Package: libpopt0
+Architecture: any
+Section: libs
+Priority: important
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: popt, libpopt-dev (<= 1.4-1), rpm (<= 4.0.2-3)
+Replaces: popt
+Description: lib for parsing cmdline parameters
+ Popt was heavily influenced by the getopt() and getopt_long() functions,
+ but it allows more powerful argument expansion. It can parse arbitrary
+ argv[] style arrays and automatically set variables based on command
+ line arguments. It also allows command line arguments to be aliased via
+ configuration files and includes utility functions for parsing arbitrary
+ strings into argv[] arrays using shell-like rules. 
+ .
+ This package contains the runtime library and locale data.
+
+Package: libpopt-dev
+Architecture: any
+Section: libdevel
+Priority: optional
+Depends: libc6-dev | libc-dev, libpopt0 (= ${binary:Version}), ${misc:Depends}
+Conflicts: popt
+Replaces: popt
+Description: lib for parsing cmdline parameters - development files
+ Popt was heavily influenced by the getopt() and getopt_long() functions,
+ but it allows more powerful argument expansion. It can parse arbitrary
+ argv[] style arrays and automatically set variables based on command
+ line arguments. It also allows command line arguments to be aliased via
+ configuration files and includes utility functions for parsing arbitrary
+ strings into argv[] arrays using shell-like rules.
+ .
+ This package contains the popt static library and header file.
+
+Package: libpopt0-udeb
+XC-Package-Type: udeb
+Architecture: any
+Section: debian-installer
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: lib for parsing cmdline parameters
+ Popt was heavily influenced by the getopt() and getopt_long() functions,
+ but it allows more powerful argument expansion. It can parse arbitrary
+ argv[] style arrays and automatically set variables based on command
+ line arguments. It also allows command line arguments to be aliased via
+ configuration files and includes utility functions for parsing arbitrary
+ strings into argv[] arrays using shell-like rules.
+ .
+ This package contains the runtime library only.
+ .
+ This is a minimal package for use in debian-installer.

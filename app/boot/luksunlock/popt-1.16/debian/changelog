@@ -1,0 +1,362 @@
+popt (1.16-1) unstable; urgency=low
+
+  * New upstream release (Closes: #581439)
+  * Switch to dpkg-source 3.0 (quilt) format
+  * Add a watch file.
+  * Update to standards version 3.8.4 (no changes)
+
+ -- Paul Martin <pm@debian.org>  Thu, 13 May 2010 05:14:50 +0100
+
+popt (1.15-1) unstable; urgency=low
+
+  * New upstream release
+  * Update to standards version 3.8.3
+    + debian/README.source added
+  * debian/rules: Switch from using "dh_clean -k" to "dh_prep".
+
+ -- Paul Martin <pm@debian.org>  Tue, 06 Oct 2009 19:13:19 +0100
+
+popt (1.14-4) unstable; urgency=low
+
+  * Remove locale data from the udeb, and change the package 
+    description. The debian-installer developers are sure that they 
+    don't need the localization information, mainly error messages.
+    (Thanks to Frans Pop for bringing this to my attention.)
+
+ -- Paul Martin <pm@debian.org>  Wed, 25 Jun 2008 07:25:34 +0100
+
+popt (1.14-3) unstable; urgency=low
+
+  * Add the locale data to the udeb, as per the package description. 
+    (Closes: #485926)
+
+ -- Paul Martin <pm@debian.org>  Thu, 12 Jun 2008 17:39:07 +0100
+
+popt (1.14-2) unstable; urgency=low
+
+  * Fix conflicts typo on libpopt0/libpopt-dev. (Closes: #485603)
+
+ -- Paul Martin <pm@debian.org>  Tue, 10 Jun 2008 14:37:05 +0100
+
+popt (1.14-1) unstable; urgency=low
+
+  * New upstream version.
+    + See CHANGES file for details.
+    + debian/patches/374797.patch no longer needed
+    + Upstream now has po/de.po, po/zh_CN.po
+  * Move existing bug fixes into quilt:
+    + debian/patches/217602.patch: Drop alignment check in 
+      poptSaveLong() and poptSaveInt()
+    + debian/patches/356669.patch: po/ca.po (Catalan).
+  * Fix debian/patches/ to allow future source format 3.0 (quilt).
+    (Closes: #484951)
+  * Fix lintian errors:
+    + substvar-source-version-is-deprecated, changed to ${binary:Version}
+    + debian-rules-ignores-make-clean-error
+  * Updates to CFLAGS in debian/rules to ensure correct build.
+  * Update to standards-version 3.8.0 and debhelper 7, and move to 
+    section libs.
+  * Note: config.sub and config.guess are whatever upstream supplies. 
+    The previous use of the latest locally installed versions was a 
+    kluge to avoid build problems on new architectures. This is not 
+    compatible with future source packaging formats, and if not carefully 
+    handled causes build problems when autotools is not installed.
+  * Accommodate cross-compilation. (Closes: #282913)
+
+ -- Paul Martin <pm@debian.org>  Mon, 09 Jun 2008 21:42:27 +0100
+
+popt (1.10-3) unstable; urgency=low
+
+  * The lib64 problem remains, as an rpath problem. Patch 374797.patch 
+    changes Makefile.in so that ./configure doesn't put the libraries in 
+    the wrong place or give them the wrong rpath. (Closes: #374797)
+    PS. This fix is fragile to any of the autoconf files (eg. 
+    configure.ac or Makefile.ac) being touched or modified.
+
+ -- Paul Martin <pm@debian.org>  Tue,  8 Aug 2006 01:41:49 +0100
+
+popt (1.10-2) unstable; urgency=low
+
+  * Fix building on 64-bit architectures where the autoconf tools want 
+    to put things in /usr/lib64 instead of /usr/lib. Thanks to Roberto 
+    Pariset for the advice and Simon Huggins for the patch.
+    (Closes: #370414)
+
+ -- Paul Martin <pm@debian.org>  Tue,  6 Jun 2006 18:28:41 +0100
+
+popt (1.10-1) unstable; urgency=low
+
+  * New upstream release
+    + Fixes wide character problem (Closes: #197416,#275234)
+  * Build a udeb. Thanks to David Härdeman for the poking.
+    (Closes: #358671)
+  * Automatically update config.sub and config.guess on build if these
+    files are available in /usr/share/misc. (Closes: #342668)
+  * Removed popt.ps from the source tarball as it's non-free.
+    (Closes: #179959)
+  * Use quilt to apply local patches:
+    + 318833.patch: Incorrect handling of leftovers together with
+      poptStuffArgs. (Closes: #318833)
+    + 278402-manpage.patch Fix manpage example code problem.
+      Thanks to Carl Henrik Lunde for the patch. (Closes: #278402)
+    + 367153-manpage.patch Fix manpage typos.
+      Thanks to A Costa for the patch. (Closes: #367153)
+  * Move po/zh_CN.GB2312.* po/zh_CN.* (Closes: #356659)
+  * Install Catalan translation ca.po. (Closes: #356669);
+  * Install new German translation de.po. (Closes: #353068)
+  * Standards-Version: 3.7.2
+  * Depend on debhelper 5
+  * Fix debian/copyright (Closes: #236282,#237290)
+
+ -- Paul Martin <pm@debian.org>  Mon, 15 May 2006 12:09:09 +0100
+
+popt (1.7-5) unstable; urgency=high
+
+  * The "I hate automake" release.
+  * Make sure configure.in and configure.ac are the same, including
+    timestamp. This allows a compile if you have two different versions of
+    automake installed. (Closes: #245819)
+  * Standards-Version: 3.6.1
+
+ -- Paul Martin <pm@debian.org>  Sun, 29 Aug 2004 16:36:43 +0100
+
+popt (1.7-4) unstable; urgency=low
+
+  * Missed alignment check in poptSaveInt(). (Closes: #217602)
+  * Add shlibdeps check for 1.7-4 if building on m68k, due to 
+    brokenness with older versions of libpopt0 (the alignment checks). 
+    Other archs may be broken, too. Please make yourselves known if so.
+
+ -- Paul Martin <pm@debian.org>  Thu, 20 Nov 2003 19:50:10 +0000
+
+popt (1.7-3) unstable; urgency=low
+
+  * Drop alignment check in poptSaveLong(). (Closes: #217602)
+  * Depend on "libc6-dev | libc-dev". (Closes: #218008)
+  * Updated config.guess and config.sub. (Closes: #218010)
+
+ -- Paul Martin <pm@debian.org>  Tue, 11 Nov 2003 14:44:21 +0000
+
+popt (1.7-2) unstable; urgency=low
+
+  * The "Apart from that, how was the play, Mrs Lincoln?" release.
+  * Acknowledging NMU. (Closes: #195072)
+    It got unstuck because the pattern it was matching for was X.X.X, 
+    and this version is just X.X. Filip's method is much cleaner.
+
+ -- Paul Martin <pm@debian.org>  Thu, 29 May 2003 20:24:32 +0100
+
+popt (1.7-1.1) unstable; urgency=low
+
+  * NMU. Sorry Paul, but this way popt could be fixed before the broken version
+    got installed into the archives.
+  * Use a different way of figuring out the package version. (Closes: #195072)
+    Packages in incoming which got (auto)built against the broken version
+    should be bin-NMUed.
+
+ -- Filip Van Raemdonck <mechanix@debian.org>  Wed, 28 May 2003 19:25:38 +0200
+
+popt (1.7-1) unstable; urgency=low
+
+  * New upstream version. (Closes: #178773, #182248, #193434)
+  * Changed section of libpopt-dev to libdevel.
+  * Added in some .po files I'd missed.
+  * Standards version: 3.5.10
+
+ -- Paul Martin <pm@debian.org>  Tue, 27 May 2003 19:29:25 +0100
+
+popt (1.6.4-2) unstable; urgency=low
+
+  * Last upload broke shlibs. This one fixes it. (Sorry joeyh.)
+  * Use and depend on debhelper v4.
+  * Standards-Version 3.5.6
+
+ -- Paul Martin <pm@debian.org>  Thu, 27 Jun 2002 00:12:41 +0100
+
+popt (1.6.4-1) unstable; urgency=low
+
+  * New upstream release (Closes: #150760)
+    - Updates config.guess and config.sub
+    - Adds a lot of checks for unexpected internal errors.
+
+ -- Paul Martin <pm@debian.org>  Mon, 24 Jun 2002 19:55:47 +0100
+
+popt (1.6.2-7) unstable; urgency=HIGH
+
+  * Backported fix from 1.6.3 to segfault in poptStrippedArgv.
+    (Closes: #135953)
+  * Please consider for inclusion in woody.
+
+ -- Paul Martin <pm@debian.org>  Wed, 27 Feb 2002 11:31:19 +0000
+
+popt (1.6.2-6) unstable; urgency=HIGH
+
+  * Modified depends in libpopt-dev to depend on
+    libpopt0 (= ${Source-Version}). Previous uploads would allow 
+    libpopt0 to get out of step with libpopt-dev, causing compiles to
+    fail if the user starts from having 1.5-1 installed, and only 
+    upgrades libpopt0. This is a violation of a "should" policy 
+    directive.  (Closes: #125685)
+  * Removed redundant ldconfig call from debian/libpopt0.postinst, as
+    debhelper does it for us. Fixes lintian postinst-unsafe-ldconfig
+    warning.
+  * Uploading with urgency=high, since this upload contains 
+    only minimal, "important" bugfixes.
+
+ -- Paul Martin <pm@debian.org>  Wed, 19 Dec 2001 15:59:03 +0000
+
+popt (1.6.2-5) unstable; urgency=low
+
+  * Add versioned shlibs. This helps out rpm's Bug#95789.
+
+ -- Paul Martin <pm@debian.org>  Mon, 30 Apr 2001 12:31:24 +0100
+
+popt (1.6.2-4) unstable; urgency=low
+
+  * Update config.guess and config.sub to the latest from GNU, to allow
+    configure to run on PARISC architecture. (Closes: #94691)
+
+ -- Paul Martin <pm@debian.org>  Fri, 27 Apr 2001 05:53:17 +0100
+
+popt (1.6.2-3) unstable; urgency=low
+
+  * Add Build-Depends on gettext. (Closes: #95292)
+
+ -- Paul Martin <pm@debian.org>  Thu, 26 Apr 2001 11:26:18 +0100
+
+popt (1.6.2-2) unstable; urgency=low
+
+  * Added versioned conflict to rpm which is statically built, as
+    that also includes all the .po files from popt.
+    (Closes: #95026,#95029)
+  * Changed libpopt0's section from libs to base, so that it agrees with
+    the override on ftp.debian.org.
+
+ -- Paul Martin <pm@debian.org>  Tue, 24 Apr 2001 17:21:26 +0100
+
+popt (1.6.2-1) unstable; urgency=low
+
+  * New maintainer.
+  * Thanks for the NMUs. (Closes: #59324,#62314)
+  * New upstream release. (Closes: #89690,#94691)
+  * Corrected copyright file. (Closes: #61411)
+  * Corrected location of upstream. (Closes: #77653)
+  * Added Build-Depends to comply with current policy.
+  * Ensure all .po files get included in libpopt0.
+  * Updated debian/rules to debhelper 3.
+
+ -- Paul Martin <pm@debian.org>  Mon, 23 Apr 2001 11:57:20 +0100
+
+popt (1.5-0.1) unstable; urgency=low
+
+  * New upstream release. (closes: Bug#59324)
+  * Non maintainer release.
+
+ -- Takuo KITAME <kitame@northeye.org>  Sat, 24 Jun 2000 06:13:12 +0900
+
+popt (1.4-1.1) frozen unstable; urgency=low
+
+  * Non-maintainer upload.
+
+  * Move libpopt to /lib since pump (/sbin) uses it. (Closes: Bug#62314)
+  * Add conflicts for libpopt-dev (old versions of -dev point to /usr/lib,
+    which makes ldconfig complain)
+
+ -- Anthony Towns <ajt@debian.org>  Sun, 16 Apr 2000 14:55:29 +1000
+
+popt (1.4-1) unstable; urgency=low
+
+  * New upstream version
+  * New version uses newer libtool (Closes: 52085)
+
+ -- Joseph Carter <knghtbrd@debian.org>  Tue, 14 Dec 1999 05:10:43 -0800
+
+popt (1.3-4) unstable; urgency=low
+
+  * Removed popt.ps from the "upstream" tarball (which I make from the
+    rpm anyway) and the package---it's non-free! (Closes: #41578)
+  * Added README.Debian to tell people about man 3 popt, which Erik
+    Troan says contains everything the postscript doc does
+
+ -- Joseph Carter <knghtbrd@debian.org>  Thu, 29 Jul 1999 05:05:52 -0700
+
+popt (1.3-3) unstable; urgency=low
+
+  * -2 is going to fail dinstall's signature check, here's -3
+
+ -- Joseph Carter <knghtbrd@debian.org>  Sun,  4 Jul 1999 06:11:17 -0700
+
+popt (1.3-2) unstable; urgency=low
+
+  * Whee, split libpopt0 and libpopt-dev packages
+  * Standards-version 3.0.0
+  * Since I had to rewrite the rules file, it now uses debhelper v2
+
+ -- Joseph Carter <knghtbrd@debian.org>  Sun,  4 Jul 1999 06:11:11 -0700
+
+popt (1.3-1) unstable; urgency=low
+
+  * Adopting package from Enrique
+  * 1.3-0.1 provided a proper dynamic library.  Closes: bug#22918
+  * Fixed dependencies
+
+ -- Joseph Carter <knghtbrd@debian.org>  Mon, 24 May 1999 01:31:16 -0700
+
+popt (1.3-0.1) unstable; urgency=low
+
+  * Non-maintainer Upload
+  * New upstream version
+  * Changes required due to the new upstream in excruciatingly exact detail
+    since this is a NMU:
+    - make PREFIX= is now make DESTDIR=
+    - clean target now uses make distclean, not make squeaky
+    - popt.3 manpage gets compressed
+    - /usr/lib/libpopt.la is chmod'd 644 to kill lintian warning
+    - libpopt.so is now --strip-unneeded'd and chmod'd 644
+    - added postinst file and made it call ldconfig on configure
+    - added shlibs file
+
+ -- Joseph Carter <knghtbrd@debian.org>  Thu, 22 Apr 1999 14:22:11 -0700
+
+popt (1.1.1-3) unstable; urgency=low
+
+  * Now popt builds properly from clean sources. Fixes: 25581, 26277.
+    
+ -- Enrique Zanardi <ezanard@debian.org>  Tue,  1 Sep 1998 11:26:54 +0100
+
+popt (1.1.1-2) unstable; urgency=low
+
+  * Don't strip libpopt.a
+    
+ -- Enrique Zanardi <ezanard@debian.org>  Thu, 30 Jul 1998 18:37:27 +0100
+
+popt (1.1.1-1) unstable; urgency=low
+
+  * New upstream version. (fixes: #22466)
+  * New documentation. (fixes: #22467)
+
+ -- Enrique Zanardi <ezanardi@molec1.dfis.ull.es>  Fri, 15 May 1998 13:34:10 +0100
+
+popt (1.0-4) unstable; urgency=low
+
+  * Updated Standards-Version.
+
+ -- Enrique Zanardi <ezanardi@molec1.dfis.ull.es>  Thu, 12 Feb 1998 10:06:42 +0000
+
+popt (1.0-3) unstable; urgency=low
+
+  * Defines the dependency on libc*-dev at build-time, fixes: Bug#17208
+
+ -- Enrique Zanardi <ezanardi@molec1.dfis.ull.es>  Sat, 30 Jan 1998 20:10:12 +0000
+
+popt (1.0-2) unstable; urgency=low
+
+  * Added patch by Bruce Perens to use "const" in poptOption structs.
+
+ -- Enrique Zanardi <ezanardi@molec1.dfis.ull.es>  Mon,  7 Jan 1998 12:15:24 +0000
+
+popt (1.0-1) unstable; urgency=low
+
+  * New package.
+
+ -- Enrique Zanardi <ezanardi@molec1.dfis.ull.es>  Mon,  5 Jan 1998 16:36:29 +0000

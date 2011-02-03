@@ -1,0 +1,4 @@
+libblkid.so.1 libblkid1 #MINVER#
+ *@BLKID_1.0 2.15~rc2-1ubuntu1
+ *@BLKID_2.15 2.15~rc2-1ubuntu1
+ *@BLKID_2.17 2.17

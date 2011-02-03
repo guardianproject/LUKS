@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+if [ -L /usr/doc/bsdutils ] ; then
+    rm -f /usr/doc/bsdutils
+fi
+
+
+#DEBHELPER#

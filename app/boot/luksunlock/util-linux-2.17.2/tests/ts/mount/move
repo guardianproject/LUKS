@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux-ng.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="move"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+DIR_SRC="$TS_OUTDIR/mnt-move-src"
+DIR_A="$TS_OUTDIR/mnt-move-A"
+DIR_B="$TS_OUTDIR/mnt-move-B"
+
+[ -d $DIR_SRC ] || mkdir $DIR_SRC
+[ -d $DIR_A ] || mkdir $DIR_A
+[ -d $DIR_B ] || mkdir $DIR_B
+
+# bind
+$TS_CMD_MOUNT --bind $DIR_SRC $DIR_A
+
+# check the bind
+egrep -q "^$DIR_SRC $DIR_A" /etc/mtab
+[ "$?" == "0" ] || ts_die "Cannot found binded $DIR_SRC in /etc/mtab"
+
+# move
+$TS_CMD_MOUNT --move $DIR_A $DIR_B
+
+# check the move
+egrep -q "^$DIR_SRC $DIR_B" /etc/mtab
+if [ "$?" != "0" ]; then
+	$TS_CMD_UMOUNT $DIR_SRC
+	ts_die "Cannot found moved $DIR_SRC in /etc/mtab"
+fi
+
+# clean up
+$TS_CMD_UMOUNT $DIR_SRC
+rmdir $DIR_SRC $DIR_A $DIR_B
+
+ts_log "Success"
+ts_finalize
+

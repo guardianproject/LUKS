@@ -1,0 +1,145 @@
+libblkid
+--------
+
+ - add command line interface for blkid_probe_filter_types():
+
+       # blkid -p -o udev --filter-type nofat
+
+ - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
+   and add support for such functionality to tests/ts/blkid/low-probe
+
+ - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
+
+ - add values:
+
+	FSSIZE   -- filesystem size (klibc requirement)
+
+ - add reference counters to the binary interfaces. Currently, all chain 
+   data are allocated in blkid_probe and cannot be used independently on 
+   the probing stuff.
+
+	blkid_topology tp = blkdi_probe_get_topology(pr)
+
+	blkid_ref(tp);
+	...
+	blkid_unref(tp);
+
+fdisk(s)
+--------
+
+ * use off_t instead "long long"
+
+ * catch SIGINT (Ctrl-C) and return to main menu.
+   From Red Hat bugzilla #545488:
+
+   While using fdisk normally, if you accidentally pressed the wrong button (to
+   start a sequence of questions for some operation, e.g. 'c' to create
+   partition).  The tool tries too hard to keep asking you for valid input.  You
+   can't provide a blank or invalid input to get it to break out of the current
+   dialog sequence and get back to the main menu.
+
+ * fdisk/* refactoring
+
+ * add GPT support
+
+misc
+----
+
+ * use ngettext() for strings with plurals, for example
+
+    /* include/nls.h */
+    #define P_(id, id_plural, n)	ngettext(id, id_plural, n)
+
+    printf(P_("%d used sector",
+              "%d used sectors", sectors),
+              sectors);
+
+ * check for program_invocation_short_name in ./configure.ac and add 
+   lib/progname.c fallback for libc without this feature (for example
+   use the 1st field from /proc/#/cmdline)
+
+ * use something better than gtk-doc (doxyden?)
+
+ * partx: copy sun.c, mac.c and dash.c from kpartx
+   git://git.kernel.org/pub/scm/linux/storage/multipath-tools/.git
+
+ * swapon -s  -- LABELs support
+
+   Although mkswap has recently been -L option to create a label nothing appears to
+   have been change to swapon to display said labels. (rh#430386)
+
+ * use TZ=UTC for tests
+
+ * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
+
+ * add mllockall() and SCHED_FIFO to hwclock,
+   see http://lkml.org/lkml/2008/10/12/132
+ 
+ * use rpmatch() for all Y/N questions
+
+ * mount -a -- reorder fstab entries by paths before mount (just idea only)
+
+ * mount -a  (just idea only)
+
+        Date:   Sun, 3 Jun 2007 18:04:24 +0300 (MET DST)
+        From: Szabolcs Szakacsits <szaka@sienet.hu>
+
+	In the past the right record order could be figured out easily by just
+	checking out fstab (if one knew what to look for) but considering the
+	fastly increasing number of user space file systems and their usage, with
+	their path, library, etc dependencies, it's getting trickier and is a black
+	magic for most users because they simply expect drives to be mounted
+	independently of their order in fstab.
+
+	One typical, wrongly edited fstab example is:
+
+	  /dev/hda2 /             ext3      defaults  1 1
+	  /dev/hda1 /mnt/windows  ntfs-3g   defaults  0 0
+	  /dev/hda3 /usr          ext3      defaults  0 0
+
+	The events:
+
+	  mount  ->  /sbin/mount.ntfs-3g  ->
+		 ->  resolves to <path1>/ntfs-3g via a symlink ->
+		 ->  ntfs-3g requires at least <path2>/libfuse*
+
+	There are many potential solutions. For example installing everything on
+	the root file system which may be needed for successful mount. But this
+	is not always feasible or practical since we could end up putting almost
+	everything on the root file system in the end.
+
+	Another idea is an improved mount strategy:
+
+	  do {
+		try to mount all unmounted entries
+	  } while (not all mounted && at least one new was successfully mounted)
+
+ * agetty: use nl_langinfo() for days and months rather than hardcoded
+   English names.
+
+ * rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
+   (there are problems with 32bit userspace on 64bit kernel)
+
+ * minix v3
+
+	From: Matthias Koenig <mkoenig@suse.de>
+	Date:   Tue, 25 Sep 2007 12:00:01 +0200
+
+	It seems that the kernel has support for minix fs v3
+	(though I have not tried it, just inspected some code when
+	trying to find a mkfs.minix issue).
+	It might be worth a thought implementing v3 support
+	(though I am not really sure how much people us minix fs ;-)
+	This might require some major code cleanup in mkfs.minix.
+
+ * rtcwake does not support wake from S5/off
+   http://bugzilla.redhat.com/show_bug.cgi?id=449115
+
+ * add SELinux security contexts support to the 'ipcs' utility
+   http://bugzilla.redhat.com/show_bug.cgi?id=225342
+
+   Would be great to list the current system IPC Objects with their respective
+   security labels (where allowed) with something like 'ipcs -Z' - following the
+   way other tools reports those.
+
+

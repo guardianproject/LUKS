@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+	remove)
+		;;
+        purge)
+		rm -f /etc/adjtime
+                ;;
+	*)
+		;;
+esac
+
+if [ -x /usr/sbin/update-mime ]; then
+	update-mime
+fi
+
+
+#DEBHELPER#

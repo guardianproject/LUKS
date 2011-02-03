@@ -1,0 +1,198 @@
+lvm.lo: lvm.c ../../../../config.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/errno.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/errno.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/errno.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/errno.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/errno-base.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/fcntl.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/sys/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/posix_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stddef.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/compiler.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/posix_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/kernel.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysmacros.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/fcntl.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/fcntl.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/fcntl.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/unistd.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/select.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/time.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/time.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/signal.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/limits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/syslimits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/limits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/limits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/limits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/internal_types.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/limits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/syslimits.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/string.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/malloc.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/signal.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/signal.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/siginfo.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/siginfo.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysconf.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/capability.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/pathconf.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/stdio.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stdarg.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdlib.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/alloca.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/strings.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/memory.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/stat.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stat.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/endian.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/endian.h \
+ topology.h ../../../../shlibs/blkid/src/blkidP.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/dirent.h \
+ ../../../../include/c.h ../../../../include/bitops.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/param.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/param.h \
+ /home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/param.h \
+ ../../../../shlibs/blkid/src/blkid.h ../../../../shlibs/blkid/src/list.h
+
+../../../../config.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/errno.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/cdefs_elf.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/errno.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/errno.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/errno.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/errno-base.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/fcntl.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/sys/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stddef.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdint.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/posix_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stddef.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/compiler.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/posix_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/kernel.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysmacros.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/fcntl.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/fcntl.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/fcntl.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/unistd.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/select.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/time.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/time.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/signal.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/limits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/syslimits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/limits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/limits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/limits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/internal_types.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/machine/limits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/syslimits.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/string.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/malloc.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/signal.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/signal.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/siginfo.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm-generic/siginfo.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/sysconf.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/capability.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/pathconf.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include-fixed/stdio.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../lib/gcc/arm-linux-androideabi/4.4.3/include/stdarg.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/stdlib.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/alloca.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/strings.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/memory.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/stat.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/stat.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/endian.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/endian.h:
+
+topology.h:
+
+../../../../shlibs/blkid/src/blkidP.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/dirent.h:
+
+../../../../include/c.h:
+
+../../../../include/bitops.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/sys/param.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/linux/param.h:
+
+/home/n8fr8/android/my-android-toolchain/bin/../sysroot/usr/include/asm/param.h:
+
+../../../../shlibs/blkid/src/blkid.h:
+
+../../../../shlibs/blkid/src/list.h:
