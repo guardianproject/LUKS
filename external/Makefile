@@ -90,8 +90,8 @@ libgpg-error-build: libgpg-error-1.10/config.sub libgpg-error-1.10/config.guess
 
 $(LOCAL)/lib/libgpg-error.a: libgpg-error-build
 	$(MAKE) -C libgpg-error-1.10 DESTDIR=$(DESTDIR) prefix= install
-	ls -l $(LOCAL)/lib/libgpg-error.a
 
+libgpg-error-install: $(LOCAL)/lib/libgpg-error.a
 
 
 #------------------------------------------------------------------------------#
@@ -114,10 +114,10 @@ libgcrypt-1.4.6/config.sub: libgcrypt-1.4.6 config.sub
 libgcrypt-1.4.6/config.guess: libgcrypt-1.4.6 config.guess
 	cp config.guess libgcrypt-1.4.6/config.guess
 
-libgcrypt-build: $(LOCAL)/lib/libgpg-error.a libgcrypt-1.4.6 libgcrypt-1.4.6/config.sub libgcrypt-1.4.6/config.guess
+libgcrypt-build: libgpg-error-install libgcrypt-1.4.6 libgcrypt-1.4.6/config.sub libgcrypt-1.4.6/config.guess
 	cd libgcrypt-1.4.6 && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-			./configure --enable-maintainer-mode --enable-static --host=$(HOST) --target=$(HOST) --prefix=$(prefix)
+			./configure --enable-maintainer-mode --enable-static --host=$(HOST) --with-gpg-error-prefix=$(LOCAL) --prefix=$(prefix)
 	$(MAKE) -C libgcrypt-1.4.6
 
 $(LOCAL)/lib/libgcrypt.a: libgcrypt-build
