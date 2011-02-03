@@ -64,14 +64,15 @@ all: cryptsetup-install
 #------------------------------------------------------------------------------#
 # libgpg-error
 
-libgpg-error-1.10.tar.bz2.sig:
-	wget ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2.sig	
+libgpg-error-1.10.tar.bz2.sig: libgpg-error-1.10.tar.bz2
+	wget ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2.sig
 # TODO verify
 
 libgpg-error-1.10.tar.bz2:
-	wget ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2
+	wget -c ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2
+	sha1sum -c libgpg-error-1.10.tar.bz2.sha1
 
-libgpg-error-1.10: libgpg-error-1.10.tar.bz2 libgpg-error-1.10.tar.bz2.sig
+libgpg-error-1.10: libgpg-error-1.10.tar.bz2.sig
 	tar xjf libgpg-error-1.10.tar.bz2
 	cp config.guess config.sub libgpg-error-1.10/
 
@@ -100,9 +101,10 @@ libgcrypt-1.4.6.tar.bz2.sig: libgcrypt-1.4.6.tar.bz2
 	wget ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.6.tar.bz2.sig
 
 libgcrypt-1.4.6.tar.bz2:
-	wget ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.6.tar.bz2
+	wget -c ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.6.tar.bz2
+	sha1sum -c libgcrypt-1.4.6.tar.bz2.sha1
 
-libgcrypt-1.4.6: libgcrypt-1.4.6.tar.bz2 libgcrypt-1.4.6.tar.bz2.sig
+libgcrypt-1.4.6: libgcrypt-1.4.6.tar.bz2.sig
 	tar xjf libgcrypt-1.4.6.tar.bz2
 	patch -p0 < libgcrypt-1.4.6-android.diff
 
@@ -132,14 +134,15 @@ libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
 #------------------------------------------------------------------------------#
 # LVM2
 
-LVM2.2.02.79.tgz.asc:
+LVM2.2.02.79.tgz.asc: LVM2.2.02.79.tgz
 	wget ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz.asc
 # TODO verify
 
 LVM2.2.02.79.tgz:
-	wget ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz
+	wget -c ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz
+	sha1sum -c LVM2.2.02.79.tgz.sha1
 
-LVM2.2.02.79: LVM2.2.02.79.tgz LVM2.2.02.79.tgz.asc
+LVM2.2.02.79: LVM2.2.02.79.tgz.asc
 	tar xzf LVM2.2.02.79.tgz
 	patch -p0 < LVM2.2.02.79-android.diff
 
@@ -165,14 +168,15 @@ lvm2-install: $(LOCAL)/lib/libdevmapper.a
 #------------------------------------------------------------------------------#
 # popt
 
-popt-1.14.tar.gz.asc:
+popt-1.14.tar.gz.asc: popt-1.14.tar.gz
 	wget http://rpm5.org/files/popt/popt-1.14.tar.gz.asc
 # TODO verify
 
 popt-1.14.tar.gz:
-	wget http://rpm5.org/files/popt/popt-1.14.tar.gz
+	wget -c http://rpm5.org/files/popt/popt-1.14.tar.gz
+	sha1sum -c popt-1.14.tar.gz.sha1
 
-popt-1.14: popt-1.14.tar.gz popt-1.14.tar.gz.asc
+popt-1.14: popt-1.14.tar.gz.asc
 	tar xzf popt-1.14.tar.gz
 	patch -p0 < popt-1.14-android.diff
 
@@ -198,13 +202,14 @@ popt-install: $(LOCAL)/lib/libpopt.a
 #------------------------------------------------------------------------------#
 # util-linux
 
-util-linux-ng-2.18.tar.bz2.sign:
+util-linux-ng-2.18.tar.bz2.sign: util-linux-ng-2.18.tar.bz2
 	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2.sign
 
 util-linux-ng-2.18.tar.bz2:
-	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2
+	wget -c http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2
+	sha1sum -c util-linux-ng-2.18.tar.bz2.sha1
 
-util-linux-ng-2.18: util-linux-ng-2.18.tar.bz2
+util-linux-ng-2.18: util-linux-ng-2.18.tar.bz2.sign
 	tar xjf util-linux-ng-2.18.tar.bz2
 	patch -p0 < util-linux-ng-2.18-android.diff
 
@@ -230,12 +235,15 @@ util-linux-ng-install: $(LOCAL)/lib/libuuid.a
 #------------------------------------------------------------------------------#
 # cryptsetup
 
-cryptsetup-1.2.0.tar.bz2:
-	wget http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2
-	wget http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2.asc 
+cryptsetup-1.2.0.tar.bz2.asc: cryptsetup-1.2.0.tar.bz2
+	wget http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2.asc
 # TODO verify
 
-cryptsetup-1.2.0: cryptsetup-1.2.0.tar.bz2
+cryptsetup-1.2.0.tar.bz2: 
+	wget -c http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2
+	sha1sum -c cryptsetup-1.2.0.tar.bz2.sha1
+
+cryptsetup-1.2.0: cryptsetup-1.2.0.tar.bz2.asc
 	tar xjf cryptsetup-1.2.0.tar.bz2
 	patch -p0 < cryptsetup-1.2.0-android.diff
 
