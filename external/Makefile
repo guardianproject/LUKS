@@ -1,13 +1,5 @@
-# Please install the following prerequisites (instructions for each follows):
-# 	Android OS SDK: http://source.android.com/download
-# 	droid-wrapper: http://github.com/tmurakam/droid-wrapper
-# 	libgpg-error: http://www.gnupg.org/related_software/libgpg-error/index.en.html
-# 	libgcrypt: http://directory.fsf.org/project/libgcrypt/
-# 	lvm2: http://sourceware.org/lvm2/
-# 	POPT: http://freshmeat.net/projects/popt/
-
-# Install and prepare the Android OS SDK ( http://source.android.com/download )
-# on Debian or Ubuntu
+# To build, install the Android NDK on GNU/Linux or Mac OS X:
+#    http://developer.android.com/sdk/ndk/index.html
 
 ### these modify the calling shell
 # point pkg-config to the .pc files generated from these builds
@@ -23,11 +15,11 @@ EXTERNAL_ROOT = $(PROJECT_ROOT)/external
 NDK_BASE ?=  /usr/local/android-ndk
 NDK_PLATFORM_LEVEL ?= 9
 NDK_SYSROOT=$(NDK_BASE)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-arm
-NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86
+NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
+NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$(NDK_UNAME)-x86
 
 # to use the real HOST tag, you need the latest libtool files:
 # http://stackoverflow.com/questions/4594736/configure-does-not-recognize-androideabi
-#HOST := arm-none-linux-gnueabi
 HOST := arm-linux-androideabi
 
 # install root for built files
