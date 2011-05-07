@@ -1,0 +1,69 @@
+Warning
+**At this time, this software should be treated as alpha software and used with a grain of paranoid salt. **
+While the LUKS project itself has been put through the paces on Linux desktops and servers, we are still determining the right conditions for its secure use on Android. With the many combinations of closed hardware, proprietary basebands, multitudes of kernels, firmwares and other mods, it is fairly impossible to guarantee security for any user. That said, we feel this effort is a useful public step forward in providing an increased level of protection for file storage, and exploring the limits of what we can provide as after-market software developers building open-source tools.
+You should also review the FAQ for CryptSetup, as it is both enlightening and empowering. ATTENTION: If you are going to read just one thing, make it the section on Backup and Data Recovery. By far the most questions on the cryptsetup mailing list are from people that just managed to somehow format or overwrite the start of their LUKS partitions. In most cases, there is nothing that can be done to help these poor souls recover their data. Make sure you understand the problem and limitations imposed by the LUKS security model BEFORE you face such a disaster!
+What is this?
+LUKS is the standard for Linux hard disk encryption. By providing a standard on-disk-format, it does not only facilitate compatibility among distributions, but also provides secure management of multiple user passwords. In contrast to existing solution, LUKS stores all setup necessary setup information in the partition header, enabling the user to transport or migrate his data seamlessly.
+This project is the port of LUKS to Android. We have built upon work from the greater Android/XDA community, and updated the build process to provide a clean Makefile for use with the latest Android Native Development Kit.
+We also have provided a compiled binary for non-developers, and are working on a user friendly app that will users to create and mount encrypted stores on their internal or external memory. The app project source can be found here: https://github.com/guardianproject/LUKS/tree/master/app/LUKSApp
+Reference
+Linux Unified Key Setup: http://code.google.com/p/cryptsetup/
+Credit and a big thanks to the original community hackers on this effort
+AndroidVoid: https://androidvoid.wordpress.com/2009/09/30/android-encryption-using-cryptsetup-and-luks/
+sigkill1337: http://forum.xda-developers.com/showthread.php?t=866131
+Another approach to Android data encryption is Whispercore for the Nexus-S: http://www.whispersys.com/whispercore.html. While it is closed-source, the developer(s) behind it do have a good reputation for trustworthy software.
+Feedback from the Community
+3/16: Some notes from Moxie Marlinspike via Twitter. We will be looking into these and updating the instructions here as appropriate:
+"You need to recompile the kernel with support for secure dm-crypt modes and specify those at cryptsetup time."
+"The trouble you're most likely going to have is with MTD on the data partition, although an MMC might fuck up as well."
+"I think you're at minimum going to need a kernel recompile here, and you probably don't want to use loopback on all devices"
+Build Steps
+set up the Android NDK on your computer
+install required software: sudo apt-get install autoconf automake libtool autopoint git make patch
+get the sources: git clone git://github.com/guardianproject/LUKS.git
+cd LUKS/external
+make NDK_ROOT=/usr/local/android-ndk-r5 (or change the path to where you put the folder)
+adb push sbin/cryptsetup.static /data/local/cryptsetup
+For more info, read the README
+Or you can download our binary: cryptsetup (right-click and download)
+Usage - Encrypted Mount
+For any CyanogenMOD (http://cyanogenmod.com) CM6.x device... creating a 50 megabyte "secretagentman.mp3" file on the sdcard to store our encrypted file system. The commands below can be issues via adb shell or terminal and require root permission.
+First Time Setup
+The "count=" variable below should create a 50MB file, but you might want to play around with the value on your system to see.
+dd if=/dev/zero of=/mnt/sdcard/secretagentman.mp3 bs=1M count=500000
+mknod /dev/loop0 b 7 0
+losetup /dev/loop0 /mnt/sdcard/secretagentman.mp3
+./cryptsetup luksFormat -c aes-plain /dev/loop0
+./cryptsetup luksOpen /dev/loop0 secretagentman
+./cryptsetup status secretagentman
+mke2fs -O uninit_bg,resize_inode,extent,dir_index -L DroidCrypt0 -FF /dev/mapper/secretagentman
+mkdir /mnt/sdcard/secretagentman
+mount /dev/mapper/secretagentman /mnt/sdcard/secretagentman
+Mount Existing
+mknod /dev/loop0 b 7 0
+losetup /dev/loop0 /mnt/sdcard/secretagentman.mp3
+./cryptsetup luksOpen /dev/loop0 secretagentman
+mount /dev/mapper/secretagentman /mnt/sdcard/secretagentman
+To Unmount and close
+umount /mnt/sdcard/secretagentman
+./cryptsetup luksClose secretagentman
+To delete secured image
+First umount and close (see above)
+rm /mnt/sdcard/secretagentman.mp3
+To access from Desktop
+Mount your SDCard via USB on your desktop machine
+Use a desktop version of cryptsetup, and follow the "Mount Existing" instructions from above, with step 2 updated to point to the desktop mount location of the "secretagentman.mp3"
+Ways to improve security of file and mount directory
+Store the file and folder as hidden files: /mnt/sdcard/.temp.file and the mount point /mnt/sdcard/.temp
+Other ideas?
+Encrypted Internal UserData Partition
+WARNING: This is an advanced usage of LUKS and should only be attempted by experience developers and admins.
+Information taken from this thread: http://forum.xda-developers.com/showpost.php?p=11616180&postcount=12
+init.rc and boot app available at: https://github.com/guardianproject/LUKS/tree/master/app/boot
+/dev/block/mtdblock5 is the "userdata" partition. I formatted it and mount it to /encrypted-data during init:
+mount yaffs2 mtd@userdata /encrypted-data nosuid nodev
+The only file on this partition is "data.encrypted" file, which gets created in init.rc as a loopback device:
+exec /system/bin/losetup /dev/block/loop0 /encrypted-data/data.encrypted
+Create the "data.encrypted" file on my computer with cryptsetup and losetup, and copied all files from my old unencrypted userdata partition to it and then copied it back as a file to the formated userdata partition.
+The sdcard "/dev/block/mmcblk0p2" partition is formated with "cryptsetup luksFormat", I did this also on my computer, saves some time. And then copy everything from the old unencrypted sdcard.
+Probably should make a script run during shutdown to cleanly "luksClose" the encrypted partition and then umount them. Not doing this is probably very crazy
