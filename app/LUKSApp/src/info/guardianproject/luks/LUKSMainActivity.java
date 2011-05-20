@@ -89,20 +89,33 @@ public class LUKSMainActivity extends Activity {
     	try {
     		
     		String password = prefs.getString("pref_store_password", "");
-    		String loopback =  prefs.getString("pref_loopback", "");
-    		String storePath = prefs.getString("pref_store_file", "");
-    		int size = Integer.parseInt(prefs.getString("pref_store_file_size", "0")) * 1000000;
-
-			LUKSManager.createStoreFile(loopback, storePath, size, password);
-			
-    		String devmapper =  prefs.getString("pref_devmapper", "");
-
-			LUKSManager.formatMountPath(devmapper);
+    		
+    		if (password.length() == 0)
+    		{
+    			authenticateCreate();
+    		}
+    		else
+    		{
+	    		String loopback =  prefs.getString("pref_loopback", "");
+	    		String storePath = prefs.getString("pref_store_file", "");
+	    		int size = Integer.parseInt(prefs.getString("pref_store_file_size", "0")) * 1000000;
+	
+				LUKSManager.createStoreFile(loopback, storePath, size, password);
+				
+	    		String devmapper =  prefs.getString("pref_devmapper", "");
+	
+				LUKSManager.formatMountPath(devmapper);
+    		}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    private void authenticateCreate ()
+    {
+    	
     }
     
     private void luksOpen ()

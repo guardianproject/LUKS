@@ -57,14 +57,19 @@ public class LUKSManager {
 		String[] cmds = {
 				"mknod " + loopback + " b 7 0",
 				"dd if=/dev/zero of=" + storePath + " bs=1M count=" + size,
-				LOSETUP_BIN + " " + loopback + " " + storePath,
-				CRYPTSETUP_BIN + " luksFormat -c aes-plain " + loopback
 		};
+
 		
 		StringBuilder log = new StringBuilder ();
 		boolean runAsRoot = true;
 		boolean waitFor = true;
-		
+
+		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot, waitFor);
+
+		String[] cmds2 = {
+				LOSETUP_BIN + " " + loopback + " " + storePath,
+				CRYPTSETUP_BIN + " luksFormat -c aes-plain " + loopback
+		};
 		
 		//logNotice("executing shell cmds: " + cmds[0] + "; runAsRoot=" + runAsRoot);
 		
@@ -85,9 +90,9 @@ public class LUKSManager {
 		// Consume the "stdout"
 		String line = null;
 	
-		for (int i = 0; i < cmds.length; i++)
+		for (int i = 0; i < cmds2.length; i++)
 		{
-			stdin.println(cmds[i]);
+			stdin.println(cmds2[i]);
 		
 			//proc.waitFor();
 			line = stdout.readLine();
