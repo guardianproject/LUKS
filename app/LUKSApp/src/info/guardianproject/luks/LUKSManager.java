@@ -2,18 +2,16 @@ package info.guardianproject.luks;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 
 import android.util.Log;
-import android.widget.Toast;
 
 public class LUKSManager {
 
 	private final static String LOSETUP_BIN = "losetup";
 	private final static String CRYPTSETUP_BIN = "/data/local/cryptsetup";
 	
-	private final static String TAG = "luks";
+	private final static String TAG = "LUKS";
 	
 	public static String getLoopbackPath () throws Exception
 	{
@@ -47,11 +45,10 @@ public class LUKSManager {
 	public static int createStoreFile (String loopback, String storePath, int size, String password) throws Exception
 	{
 		
-		//mknod /dev/loop0 b 7 0
-		//losetup /dev/loop0 /mnt/sdcard/secretagentman.mp3
-		//dd if=/dev/zero of=/mnt/sdcard/secretagentman.mp3 bs=1M count=50000000
-		
-//		cryptsetup luksFormat -c aes-plain /dev/loop0
+		// mknod /dev/loop0 b 7 0
+		// losetup /dev/loop0 /mnt/sdcard/secretagentman.mp3
+		// dd if=/dev/zero of=/mnt/sdcard/secretagentman.mp3 bs=1M count=50000000
+		// cryptsetup luksFormat -c aes-plain /dev/loop0
 
 		
 		String[] cmds = {
@@ -60,77 +57,68 @@ public class LUKSManager {
 		};
 
 		
-		StringBuilder log = new StringBuilder ();
-		boolean runAsRoot = true;
-		boolean waitFor = true;
-
-		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot, waitFor);
+		StringBuilder log = new StringBuilder();
+		int err = ServiceShellUtils.doShellCommand(cmds, log, true, true);
 
 		String[] cmds2 = {
 				LOSETUP_BIN + " " + loopback + " " + storePath,
 				CRYPTSETUP_BIN + " luksFormat -c aes-plain " + loopback
 		};
+
 		
-		//logNotice("executing shell cmds: " + cmds[0] + "; runAsRoot=" + runAsRoot);
-		
-		Process proc = null;
-		int exitCode = -1;
-		
-            
-    	if (runAsRoot)
-    		proc = Runtime.getRuntime().exec("su");
-    	else
-    		proc = Runtime.getRuntime().exec("sh");
-    	
-    	
+		Process proc = Runtime.getRuntime().exec("su");
     	PrintStream stdin = new PrintStream(proc.getOutputStream());
-		BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+		// BufferedReader stderr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 	
 		// Consume the "stdout"
 		String line = null;
 	
-		for (int i = 0; i < cmds2.length; i++)
+		for (String cmd: cmds2)
 		{
-			stdin.println(cmds2[i]);
+			Log.d(TAG,"Running " + cmd);
+			stdin.println(cmd);
 		
 			//proc.waitFor();
 			line = stdout.readLine();
-			Log.d("luks",line);
+			Log.d(TAG,line);
 			
 			while (stdout.ready())
 			{
 				line = stdout.readLine();
-				Log.d("luks",line);
-				
+				Log.d(TAG,line);
 			}
 			
+			Log.d(TAG,"Done running " + cmd);
 		}
-		//confirm YES
+		Log.d(TAG,"Confirming YES");
+		// Confirm YES
 		stdin.println("YES");
+		
 		
 		if (stdout.ready())
 		{
+			Log.d(TAG,"Sending Password");
 			//send password
 			line = stdout.readLine();
+			Log.d(TAG,line);
 			stdin.println(password);
+			Log.d(TAG,"Password Sent");
 			
-			//confirm pwd
+			// Confirm pwd
+			Log.d(TAG,"Confirming Password");
 			line = stdout.readLine();
+			Log.d(TAG,line);
 			stdin.println(password);
-	
-		}        
+			Log.d(TAG,"Password Confirmed");
+		} else 
+			Log.d(TAG,"StdOut was not ready");
         
 		stdin.flush();
-		stdin.println("exit");
+		stdin.println("exit\n");
 		stdin.flush();
-		
-			
-        
 	
-		return exitCode;
-		
-
+		return proc.waitFor();
 	}
 	
 	public static int formatMountPath (String devmapper) throws Exception
