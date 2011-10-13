@@ -238,9 +238,9 @@ public class LUKSManager {
 		close (devmapper, mountPath);
 		
 		String[] cmds = {
-				"rm -rf  " + mountPath,
-				"rm -f " + storePath,
-				"rm -f " + loopback
+				"rm -r " + mountPath,
+				"rm " + storePath,
+				"rm " + loopback
 		};
 		
 		StringBuilder log = new StringBuilder ();
