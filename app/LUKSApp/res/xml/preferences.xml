@@ -1,38 +1,29 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-<EditTextPreference android:key="pref_store_file" android:defaultValue="/mnt/sdcard/.temp.file" android:dialogTitle="Encrypted Store File" android:summary="the file where the data is" android:title="Encrypted Store File"/>
+	<EditTextPreference android:key="pref_store_file"
+		android:defaultValue="/mnt/sdcard/.temp.file" android:dialogTitle="Encrypted Store File"
+		android:summary="File where encrypted data is kept" android:title="Encrypted Store File" />
 
-<EditTextPreference android:key="pref_store_file_size"
-android:defaultValue="5"
-android:title="Encrypted Store Size"
-android:summary="size in MB of the store (50MB default)"
-android:dialogTitle="Encrypted Store Size"
-/>
+	<EditTextPreference android:key="pref_store_file_size"
+		android:defaultValue="5" android:title="Encrypted Store Size"
+		android:summary="Size of the store (5MB default)"
+		android:dialogTitle="Encrypted Store Size (MB)" />
 
+	<EditTextPreference android:key="pref_mount_path"
+		android:dialogTitle="Mount Path" android:summary="the folder location for reading and writing"
+		android:title="Mount Path Location" android:defaultValue="/mnt/sdcard/secure_store" />
 
-<EditTextPreference android:key="pref_mount_path" android:dialogTitle="Mount Path" android:summary="the folder location for reading and writing" android:title="Mount Path Location" android:defaultValue="/mnt/sdcard/secure_store"/>
+	<EditTextPreference android:key="pref_store_password"
+		android:defaultValue="" android:title="Store Password (Opt)"
+		android:summary="Pin or password need to open secure store"
+		android:dialogTitle="Password" android:password="true" />
 
-<EditTextPreference android:key="pref_store_password"
-android:defaultValue=""
-android:title="Store Password (Opt)"
-android:summary="pin or password need to open secure store"
-android:dialogTitle="Password"
-android:password="true"
-/>
+	<EditTextPreference android:key="pref_loopback"
+		android:defaultValue="/dev/loop0" android:title="Loopback Device"
+		android:summary="Path for loopback device" android:dialogTitle="Loopback" />
 
-<EditTextPreference android:key="pref_loopback"
-android:defaultValue="/dev/loop0"
-android:title="Loopback Device"
-android:summary="path for loopback device"
-android:dialogTitle="Loopback"
-/>
-
-<EditTextPreference android:key="pref_devmapper"
-android:defaultValue="luksdm"
-android:title="Dev Mapper"
-android:summary="name for dev mapper device"
-android:dialogTitle="Loopback"
-/>
-
+	<EditTextPreference android:key="pref_devmapper"
+		android:defaultValue="luksdm" android:title="Dev Mapper"
+		android:summary="Name for dev mapper device" android:dialogTitle="Loopback" />
 
 </PreferenceScreen>
