@@ -76,20 +76,21 @@ public class LUKSManager {
 	
 		for (String cmd: cmds2)
 		{
-			Log.d(TAG,"Running " + cmd);
+			Log.d(TAG,"Running '" + cmd + "'");
 			stdin.println(cmd);
+			stdin.flush();
 		
 			//proc.waitFor();
-			line = stdout.readLine();
-			Log.d(TAG,line);
+			//line = stdout.readLine();
+			//Log.d(TAG,line);
 			
 			while (stdout.ready())
 			{
 				line = stdout.readLine();
-				Log.d(TAG,line);
+				Log.d(TAG,"\t" + line);
 			}
 			
-			Log.d(TAG,"Done running " + cmd);
+			Log.d(TAG,"Done running command");
 		}
 		Log.d(TAG,"Confirming YES");
 		// Confirm YES
@@ -238,8 +239,8 @@ public class LUKSManager {
 		
 		String[] cmds = {
 				"rm -rf  " + mountPath,
-				"rm -rf  " + storePath,
-				"rm -rf  " + loopback
+				"rm -f " + storePath,
+				"rm -f " + loopback
 		};
 		
 		StringBuilder log = new StringBuilder ();
@@ -247,6 +248,12 @@ public class LUKSManager {
 		boolean waitFor = true;
 		
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot, waitFor);
+		
+		String[] lines = log.toString().split("^");
+		if (lines.length != 0)
+			Log.v(TAG, "Process stdout + stderr:");
+		for (String line : lines)
+			Log.v(TAG, "\t" + line);
 		
 		return err;
 		

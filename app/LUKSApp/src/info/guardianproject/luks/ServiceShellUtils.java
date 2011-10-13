@@ -147,8 +147,11 @@ public class ServiceShellUtils {
 
 	public static int doShellCommand(String[] cmds, StringBuilder log,
 			boolean runAsRoot, boolean waitFor) throws Exception {
-		logNotice("executing shell cmds: " + cmds[0] + "; runAsRoot="
-				+ runAsRoot);
+
+		logNotice("Executing shell cmds in process: runProcessAsRoot="
+				+ runAsRoot + "; waitOnProcess=" + waitFor);
+		for (String cmd : cmds)
+			logNotice("\t" + cmd);
 
 		Process proc = null;
 

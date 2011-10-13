@@ -90,12 +90,12 @@ public class LUKSMainActivity extends Activity {
     		
     		String password = prefs.getString("pref_store_password", "");
     		
-    		if (password.length() == 0)
-    		{
-    			authenticateCreate();
-    		}
-    		else
-    		{
+    		//if (password.length() == 0)
+    		//{
+    		//	authenticateCreate();
+    		//}
+    		//else
+    		//{
 	    		String loopback =  prefs.getString("pref_loopback", "");
 	    		String storePath = prefs.getString("pref_store_file", "");
 	    		int size = Integer.parseInt(prefs.getString("pref_store_file_size", "0")) * 1000000;
@@ -105,7 +105,7 @@ public class LUKSMainActivity extends Activity {
 	    		String devmapper =  prefs.getString("pref_devmapper", "");
 	
 				LUKSManager.formatMountPath(devmapper);
-    		}
+    		//}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -177,7 +177,6 @@ public class LUKSMainActivity extends Activity {
     		LUKSManager.delete(storePath, mountPath, devmapper, loopback);
     	}
     	catch (Exception e) {
- 			// TODO Auto-generated catch block
  			e.printStackTrace();
  		}
     }
