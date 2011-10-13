@@ -2,15 +2,15 @@
 
 	<EditTextPreference android:key="pref_store_file"
 		android:defaultValue="/mnt/sdcard/.temp.file" android:dialogTitle="Encrypted Store File"
-		android:summary="File where encrypted data is kept" android:title="Encrypted Store File" />
+		android:summary="File where encrypted drive is kept" android:title="Encrypted Store File" />
 
 	<EditTextPreference android:key="pref_store_file_size"
 		android:defaultValue="5" android:title="Encrypted Store Size"
-		android:summary="Size of the store (5MB default)"
-		android:dialogTitle="Encrypted Store Size (MB)" />
+		android:summary="Size of the store (5MB default)" android:dialogTitle="Encrypted Store Size (MB)" />
 
 	<EditTextPreference android:key="pref_mount_path"
-		android:dialogTitle="Mount Path" android:summary="the folder location for reading and writing"
+		android:dialogTitle="Mount Path"
+		android:summary="Folder location for reading and writing to unencrypted drive"
 		android:title="Mount Path Location" android:defaultValue="/mnt/sdcard/secure_store" />
 
 	<EditTextPreference android:key="pref_store_password"
