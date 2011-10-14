@@ -98,17 +98,17 @@ public class LUKSMainActivity extends Activity {
     		//{
 	    		String loopback =  prefs.getString("pref_loopback", "");
 	    		String storePath = prefs.getString("pref_store_file", "");
-	    		int size = Integer.parseInt(prefs.getString("pref_store_file_size", "0")) * 1000000;
+	    		int size = Integer.parseInt(prefs.getString("pref_store_file_size", "1")) * 1000000;
+	    		String devmapper =  prefs.getString("pref_devmapper", "luksdm");
 	
 				LUKSManager.createStoreFile(loopback, storePath, size, password);
 				
-	    		String devmapper =  prefs.getString("pref_devmapper", "");
-	
+				LUKSManager.open(loopback, devmapper, password);
+				
 				LUKSManager.formatMountPath(devmapper);
     		//}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

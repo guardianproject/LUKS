@@ -151,7 +151,7 @@ public class ServiceShellUtils {
 		logNotice("Executing shell cmds in process: runProcessAsRoot="
 				+ runAsRoot + "; waitOnProcess=" + waitFor);
 		for (String cmd : cmds)
-			logNotice("\t" + cmd);
+			logNotice("\t" + cmd.replace('\n', ' '));
 
 		Process proc = null;
 
@@ -191,7 +191,7 @@ public class ServiceShellUtils {
 		}
 
 		int exitCode = proc.waitFor();
-		log.append("process exit code: ");
+		log.append("Process exit code: ");
 		log.append(exitCode);
 		log.append("\n");
 
