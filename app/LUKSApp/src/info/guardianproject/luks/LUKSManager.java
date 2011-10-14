@@ -17,7 +17,8 @@ public class LUKSManager {
 
 	private final static String TAG = "LUKS";
 
-	public static String getLoopbackPath() throws Exception {
+	/* Does this work on Android / Busybox's losetup? Seems not to...
+	 * public static String getLoopbackPath() throws Exception {
 		// system/bin/losetup -f
 
 		String[] cmds = { LOSETUP_BIN + " -f" };
@@ -31,7 +32,7 @@ public class LUKSManager {
 				waitFor);
 
 		return log.toString();
-	}
+	}*/
 
 	public static int createMountPath(String mountPath) throws Exception {
 		// mkdir /mnt/sdcard/foo
@@ -43,6 +44,8 @@ public class LUKSManager {
 
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot,
 				waitFor);
+		
+		printLog(log);
 
 		return err;
 	}
@@ -67,6 +70,8 @@ public class LUKSManager {
 
 		StringBuilder log = new StringBuilder();
 		int exitCode = ServiceShellUtils.doShellCommand(cmds, log, true, true);
+
+		printLog(log);
 
 		return exitCode;
 	}
@@ -124,13 +129,7 @@ public class LUKSManager {
 		StringBuilder log = new StringBuilder();
 		int err = ServiceShellUtils.doShellCommand(cmds, log, true, true);
 
-		String[] lines = log.toString().split("^");
-
-		if (lines.length != 0)
-			Log.v(TAG, "Process stdout + stderr:");
-		for (String line : lines)
-			if (line.length() != 0)
-				Log.v(TAG, "\t" + line);
+		printLog(log);
 
 		return err;
 	}
@@ -144,25 +143,18 @@ public class LUKSManager {
 
 		int exitCode = ServiceShellUtils.doShellCommand(cmds, log, true, true);
 
-		
-		String[] lines = log.toString().split("^");
-		if (lines.length != 0)
-			Log.v(TAG, "Process stdout + stderr:");
-		for (String line : lines)
-			if (line.length() != 0)
-				Log.v(TAG, "\t" + line);
+		printLog(log);
 
 		return exitCode;
-
 	}
 
 	public static int mount(String devmapper, String mountPath)
 			throws Exception {
-		// //mount /dev/mapper/secretagentman /mnt/sdcard/secretagentman
-		//# mount -o rw -t ext3 /dev/mapper/luksdm /mnt/sdcard/secret
-
-		String[] cmds = { "mkdir " + mountPath,
-				"mount /dev/mapper/" + devmapper + " " + mountPath };
+		// Mount -o rw -t ext3 /dev/mapper/luksdm /mnt/sdcard/secret
+		String[] cmds = {
+				"mkdir " + mountPath,
+				"mount -o rw -t ext3 /dev/mapper/" + devmapper + " "
+						+ mountPath };
 		StringBuilder log = new StringBuilder();
 		boolean runAsRoot = true;
 		boolean waitFor = true;
@@ -170,7 +162,7 @@ public class LUKSManager {
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot,
 				waitFor);
 
-		Log.i(TAG, log.toString());
+		printLog(log);
 
 		return err;
 	}
@@ -185,6 +177,7 @@ public class LUKSManager {
 
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot,
 				waitFor);
+		printLog(log);
 
 		return log.toString();
 
@@ -201,6 +194,8 @@ public class LUKSManager {
 
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot,
 				waitFor);
+		
+		printLog(log);
 
 		return err;
 	}
@@ -218,37 +213,18 @@ public class LUKSManager {
 
 		int err = ServiceShellUtils.doShellCommand(cmds, log, runAsRoot,
 				waitFor);
+		
+		printLog(log);
 
+		return err;
+	}
+	
+	private static void printLog(StringBuilder log) {
 		String[] lines = log.toString().split("^");
 		if (lines.length != 0)
 			Log.v(TAG, "Process stdout + stderr:");
 		for (String line : lines)
-			Log.v(TAG, "\t" + line);
-
-		return err;
-
-	}
-
-}
-
-class StreamGobbler extends Thread {
-	InputStream is;
-	String type;
-
-	StreamGobbler(InputStream is, String type) {
-		this.is = is;
-		this.type = type;
-	}
-
-	public void run() {
-		try {
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null)
-				System.out.println(type + ">" + line);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+			if (line.length() != 0)
+				Log.v(TAG, "\t" + line);
 	}
 }
