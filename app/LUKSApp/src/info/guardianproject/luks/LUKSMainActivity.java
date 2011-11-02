@@ -1,22 +1,35 @@
 package info.guardianproject.luks;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipInputStream;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
 public class LUKSMainActivity extends Activity {
+	
+	private final static String TAG = "LUKS";
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        File fileApp = installCryptSetup(this);
+        
+        LUKSManager.setCryptSetupPath(fileApp.getAbsolutePath());
         
         Button btn = (Button)findViewById(R.id.btn1);
         btn.setOnClickListener(new OnClickListener()
@@ -197,6 +210,39 @@ public class LUKSMainActivity extends Activity {
  			// TODO Auto-generated catch block
  			e.printStackTrace();
  		}
+    }
+    
+    private static File installCryptSetup(Context context) {
+        
+        try {
+            File applicationFilesDirectory = context.getFilesDir();
+            File binDir = new File(applicationFilesDirectory, "bin");
+            if(!binDir.exists()) binDir.mkdirs();
+            File binAppFile = new File(binDir, "cryptsetup");
+            if(!binAppFile.exists()) {
+            	ZipInputStream in = new ZipInputStream(context.getAssets().open("cryptsetup"));
+            	in.getNextEntry();
+            	
+                OutputStream out =  new FileOutputStream(binAppFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.flush();
+                out.close();
+            }
+            
+            Runtime.getRuntime().exec("chmod 755 " + binAppFile.getAbsolutePath());
+            
+            return binAppFile;
+        }
+        catch (Exception e) {
+            Log.e(TAG, "Error copying app file" + e.getMessage());
+        }
+        
+        return null;
     }
     
 }

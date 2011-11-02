@@ -13,7 +13,7 @@ import android.util.Log;
 public class LUKSManager {
 
 	private final static String LOSETUP_BIN = "losetup";
-	private final static String CRYPTSETUP_BIN = "cryptsetup";
+	private static String CRYPTSETUP_BIN = "cryptsetup";
 
 	private final static String TAG = "LUKS";
 
@@ -34,6 +34,11 @@ public class LUKSManager {
 		return log.toString();
 	}*/
 
+	public static void setCryptSetupPath (String path)
+	{
+		CRYPTSETUP_BIN = path;
+	}
+	
 	public static int createMountPath(String mountPath) throws Exception {
 		// mkdir /mnt/sdcard/foo
 
