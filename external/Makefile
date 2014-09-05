@@ -253,8 +253,9 @@ cryptsetup-1.2.0/config.guess: cryptsetup-1.2.0 config.guess
 	cp config.guess cryptsetup-1.2.0/config.guess
 
 cryptsetup-build: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup-1.2.0 cryptsetup-1.2.0/config.sub cryptsetup-1.2.0/config.guess
-	rm lib/*.la
+	rm -f lib/*.la
 	cd cryptsetup-1.2.0 && \
+	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup
 	$(MAKE) -C cryptsetup-1.2.0
