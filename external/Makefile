@@ -224,7 +224,7 @@ cryptsetup/Makefile: cryptsetup/config.sub cryptsetup/config.guess
 	cd cryptsetup && \
 	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup --disable-kernel_crypto --enable-reencrypt
+			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --disable-selinux --enable-static-cryptsetup --disable-kernel_crypto
 
 cryptsetup/src/cryptsetup.static: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup/Makefile
 	$(MAKE) -C cryptsetup
