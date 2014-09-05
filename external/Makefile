@@ -127,11 +127,11 @@ libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
 # LVM2
 
 LVM2.2.02.79.tgz.asc: LVM2.2.02.79.tgz
-	wget ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz.asc
+	wget ftp://sources.redhat.com/pub/lvm2/releases/LVM2.2.02.79.tgz.asc
 # TODO verify
 
 LVM2.2.02.79.tgz:
-	wget -c ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz
+	wget -c ftp://sources.redhat.com/pub/lvm2/releases/LVM2.2.02.79.tgz
 	sha1sum -c LVM2.2.02.79.tgz.sha1
 
 LVM2.2.02.79: LVM2.2.02.79.tgz.asc
