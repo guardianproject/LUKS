@@ -147,7 +147,7 @@ popt-1.16.tar.gz.asc: popt-1.16.tar.gz
 
 popt-1.16.tar.gz:
 	wget -c http://rpm5.org/files/popt/popt-1.16.tar.gz
-	#sha1sum -c popt-1.16.tar.gz.sha1
+	sha1sum -c popt-1.16.tar.gz.sha1
 
 popt-1.16: popt-1.16.tar.gz.asc
 	tar xzf popt-1.16.tar.gz
