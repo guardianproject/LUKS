@@ -55,7 +55,7 @@ LDFLAGS = -L$(LOCAL)/lib -Wl,--rpath,$(LOCAL)/lib
 # download sources and verify
 
 
-SOURCEDIRS = libgpg-error libgcrypt popt-1.16 cryptsetup LVM2.2.02.79 util-linux-ng-2.18
+SOURCEDIRS = libgpg-error libgcrypt popt-1.16 cryptsetup lvm2 util-linux-ng-2.18
 
 all: cryptsetup-install
 
@@ -119,33 +119,21 @@ libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
 #------------------------------------------------------------------------------#
 # LVM2
 
-LVM2.2.02.79.tgz.asc: LVM2.2.02.79.tgz
-	wget ftp://sources.redhat.com/pub/lvm2/releases/LVM2.2.02.79.tgz.asc
-# TODO verify
-
-LVM2.2.02.79.tgz:
-	wget -c ftp://sources.redhat.com/pub/lvm2/releases/LVM2.2.02.79.tgz
-	sha1sum -c LVM2.2.02.79.tgz.sha1
-
-LVM2.2.02.79: LVM2.2.02.79.tgz.asc
-	tar xzf LVM2.2.02.79.tgz
-	patch -p0 < LVM2.2.02.79-android.diff
-
-LVM2.2.02.79/autoconf/config.sub: LVM2.2.02.79 config.sub
-	cp config.sub LVM2.2.02.79/autoconf/config.sub
-
-LVM2.2.02.79/autoconf/config.guess: LVM2.2.02.79 config.guess
-	cp config.guess LVM2.2.02.79/autoconf/config.guess
-
-#Now we have to get LVM2
-lvm2-build: LVM2.2.02.79/autoconf/config.sub LVM2.2.02.79/autoconf/config.guess
-	cd LVM2.2.02.79 && \
+lvm2/Makefile:
+	cp config.sub lvm2/autoconf/config.sub
+	cp config.guess lvm2/autoconf/config.guess
+	-patch -N -p0 --reject-file=- < lvm2-android.diff
+	cd lvm2 && \
 		autoreconf && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure --host=$(HOST) --prefix=$(prefix) --enable-static_link --enable-lvm1_fallback --enable-fsadm --with-clvmd=cman --with-cluster=internal --with-pool=internal --with-user= --with-group= --with-dmdir=device-mapper.0 --with-device-uid=0 --with-device-gid=6 --with-device-mode=0660 --with-clvmd=none --with-pool=none --with-cluster=none --with-snapshots=none --with-mirrors=none --enable-pkgconfig
-	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C LVM2.2.02.79
+
+lvm2/libdm/ioctl/libdevmapper.a: lvm2/Makefile
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C lvm2
+
+lvm2-build: lvm2/libdm/ioctl/libdevmapper.a
 
 $(LOCAL)/lib/libdevmapper.a: lvm2-build
-	$(MAKE) -C LVM2.2.02.79 DESTDIR=$(DESTDIR) prefix= install
+	$(MAKE) -C lvm2 DESTDIR=$(DESTDIR) prefix= install
 
 lvm2-install: $(LOCAL)/lib/libdevmapper.a
 
