@@ -76,7 +76,7 @@ libgpg-error-1.10/config.guess: libgpg-error-1.10 config.guess
 
 libgpg-error-build: libgpg-error-1.10/config.sub libgpg-error-1.10/config.guess
 	cd libgpg-error-1.10 && \
-		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="-lgpg-error $(LDFLAGS)" \
+		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			--disable-languages --enable-static --host=$(HOST)
 	$(MAKE) -C libgpg-error-1.10
 
@@ -108,7 +108,7 @@ libgcrypt-1.4.6/config.guess: libgcrypt-1.4.6 config.guess
 
 libgcrypt-build: libgpg-error-install libgcrypt-1.4.6 libgcrypt-1.4.6/config.sub libgcrypt-1.4.6/config.guess
 	cd libgcrypt-1.4.6 && \
-		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="-lgpg-error $(LDFLAGS)" \
 			./configure --enable-maintainer-mode --enable-static --host=$(HOST) --with-gpg-error-prefix=$(LOCAL) --prefix=$(prefix)
 	$(MAKE) -C libgcrypt-1.4.6
 
