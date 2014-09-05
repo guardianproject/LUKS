@@ -234,34 +234,34 @@ util-linux-ng-install: $(LOCAL)/lib/libuuid.a
 #------------------------------------------------------------------------------#
 # cryptsetup
 
-cryptsetup-1.2.0.tar.bz2.asc: cryptsetup-1.2.0.tar.bz2
-	wget http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2.asc
+cryptsetup-1.6.6.tar.sign: cryptsetup-1.6.6.tar.xz
+	wget https://www.kernel.org/pub/linux/utils/cryptsetup/v1.6/cryptsetup-1.6.6.tar.sign
 # TODO verify
 
-cryptsetup-1.2.0.tar.bz2: 
-	wget -c http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2
-	sha1sum -c cryptsetup-1.2.0.tar.bz2.sha1
+cryptsetup-1.6.6.tar.xz: 
+	wget -c https://www.kernel.org/pub/linux/utils/cryptsetup/v1.6/cryptsetup-1.6.6.tar.xz
+	#sha1sum -c cryptsetup-1.6.6.tar.xz.sha1
 
-cryptsetup-1.2.0: cryptsetup-1.2.0.tar.bz2.asc
-	tar xjf cryptsetup-1.2.0.tar.bz2
-	patch -p0 < cryptsetup-1.2.0-android.diff
+cryptsetup-1.6.6: cryptsetup-1.6.6.tar.sign
+	tar xf cryptsetup-1.6.6.tar.xz
+	patch -p0 < cryptsetup-1.6.6-android.diff
 
-cryptsetup-1.2.0/config.sub: cryptsetup-1.2.0 config.sub
-	cp config.sub cryptsetup-1.2.0/config.sub
+cryptsetup-1.6.6/config.sub: cryptsetup-1.6.6 config.sub
+	cp config.sub cryptsetup-1.6.6/config.sub
 
-cryptsetup-1.2.0/config.guess: cryptsetup-1.2.0 config.guess
-	cp config.guess cryptsetup-1.2.0/config.guess
+cryptsetup-1.6.6/config.guess: cryptsetup-1.6.6 config.guess
+	cp config.guess cryptsetup-1.6.6/config.guess
 
-cryptsetup-build: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup-1.2.0 cryptsetup-1.2.0/config.sub cryptsetup-1.2.0/config.guess
+cryptsetup-build: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup-1.6.6 cryptsetup-1.6.6/config.sub cryptsetup-1.6.6/config.guess
 	rm -f lib/*.la
-	cd cryptsetup-1.2.0 && \
+	cd cryptsetup-1.6.6 && \
 	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup
-	$(MAKE) -C cryptsetup-1.2.0
+			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup --disable-kernel_crypto --enable-reencrypt
+	$(MAKE) -C cryptsetup-1.6.6
 
 $(LOCAL)/sbin/cryptsetup: cryptsetup-build
-	$(MAKE) -C cryptsetup-1.2.0 DESTDIR=$(DESTDIR) prefix= install
+	$(MAKE) -C cryptsetup-1.6.6 DESTDIR=$(DESTDIR) prefix= install
 
 cryptsetup-install: $(LOCAL)/sbin/cryptsetup
 
