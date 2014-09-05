@@ -76,7 +76,7 @@ libgpg-error-1.10/config.guess: libgpg-error-1.10 config.guess
 
 libgpg-error-build: libgpg-error-1.10/config.sub libgpg-error-1.10/config.guess
 	cd libgpg-error-1.10 && \
-		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="-lgpg-error $(LDFLAGS)" \
 			--disable-languages --enable-static --host=$(HOST)
 	$(MAKE) -C libgpg-error-1.10
 
