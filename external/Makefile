@@ -234,36 +234,32 @@ util-linux-ng-install: $(LOCAL)/lib/libuuid.a
 #------------------------------------------------------------------------------#
 # cryptsetup
 
-cryptsetup-1.6.6.tar.sign: cryptsetup-1.6.6.tar.xz
-	wget https://www.kernel.org/pub/linux/utils/cryptsetup/v1.6/cryptsetup-1.6.6.tar.sign
-# TODO verify
+cryptsetup/config.sub: config.sub
+	cp config.sub cryptsetup/config.sub
 
-cryptsetup-1.6.6.tar.xz: 
-	wget -c https://www.kernel.org/pub/linux/utils/cryptsetup/v1.6/cryptsetup-1.6.6.tar.xz
-	#sha1sum -c cryptsetup-1.6.6.tar.xz.sha1
+cryptsetup/config.guess: config.guess
+	cp config.guess cryptsetup/config.guess
 
-cryptsetup-1.6.6: cryptsetup-1.6.6.tar.sign
-	tar xf cryptsetup-1.6.6.tar.xz
-	patch -p0 < cryptsetup-1.6.6-android.diff
-
-cryptsetup-1.6.6/config.sub: cryptsetup-1.6.6 config.sub
-	cp config.sub cryptsetup-1.6.6/config.sub
-
-cryptsetup-1.6.6/config.guess: cryptsetup-1.6.6 config.guess
-	cp config.guess cryptsetup-1.6.6/config.guess
-
-cryptsetup-build: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup-1.6.6 cryptsetup-1.6.6/config.sub cryptsetup-1.6.6/config.guess
+cryptsetup/Makefile: cryptsetup/config.sub cryptsetup/config.guess
+	-patch -N -p0 --reject-file=- < cryptsetup-android.diff
 	rm -f lib/*.la
-	cd cryptsetup-1.6.6 && \
+	cd cryptsetup && \
 	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup --disable-kernel_crypto --enable-reencrypt
-	$(MAKE) -C cryptsetup-1.6.6
+
+cryptsetup/src/cryptsetup.static: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup/Makefile
+	$(MAKE) -C cryptsetup
+
+cryptsetup-build: cryptsetup/src/cryptsetup.static
 
 $(LOCAL)/sbin/cryptsetup: cryptsetup-build
-	$(MAKE) -C cryptsetup-1.6.6 DESTDIR=$(DESTDIR) prefix= install
+	$(MAKE) -C cryptsetup DESTDIR=$(DESTDIR) prefix= install
 
 cryptsetup-install: $(LOCAL)/sbin/cryptsetup
+
+cryptsetup-clean:
+	-$(MAKE) -C cryptsetup clean
 
 #------------------------------------------------------------------------------#
 # clean
