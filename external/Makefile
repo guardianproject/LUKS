@@ -80,7 +80,7 @@ libgpg-error/src/.libs/libgpg-error.a: libgpg-error/Makefile
 
 libgpg-error-build: libgpg-error/src/.libs/libgpg-error.a
 
-$(LOCAL)/lib/libgpg-error.a: libgpg-error-build
+$(LOCAL)/lib/libgpg-error.a: libgpg-error/src/.libs/libgpg-error.a
 	$(MAKE) -C libgpg-error DESTDIR=$(DESTDIR) prefix= install
 
 libgpg-error-install: $(LOCAL)/lib/libgpg-error.a
@@ -106,7 +106,7 @@ libgcrypt/src/.libs/libgcrypt.a: $(LOCAL)/lib/libgpg-error.a libgcrypt/Makefile
 
 libgcrypt-build: libgcrypt/src/.libs/libgcrypt.a
 
-$(LOCAL)/lib/libgcrypt.a: libgcrypt-build
+$(LOCAL)/lib/libgcrypt.a: libgcrypt/src/.libs/libgcrypt.a
 	$(MAKE) -C libgcrypt DESTDIR=$(DESTDIR) prefix= install
 
 libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
@@ -132,7 +132,7 @@ lvm2/libdm/ioctl/libdevmapper.a: lvm2/Makefile
 
 lvm2-build: lvm2/libdm/ioctl/libdevmapper.a
 
-$(LOCAL)/lib/libdevmapper.a: lvm2-build
+$(LOCAL)/lib/libdevmapper.a: lvm2/libdm/ioctl/libdevmapper.a
 	$(MAKE) -C lvm2 DESTDIR=$(DESTDIR) prefix= install
 
 lvm2-install: $(LOCAL)/lib/libdevmapper.a
@@ -159,16 +159,16 @@ popt-1.16/config.sub: popt-1.16 config.sub
 popt-1.16/config.guess: popt-1.16 config.guess
 	cp config.guess popt-1.16/config.guess
 
-libpopt-1.16/.libs/libpopt.a: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
+popt-1.16/.libs/libpopt.a: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
 	cd popt-1.16 && \
 		autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --prefix=$(prefix) --host=$(HOST) --enable-static
 	$(MAKE) -C popt-1.16
 
-popt-build: libpopt-1.16/.libs/libpopt.a
+popt-build: popt-1.16/.libs/libpopt.a
 
-$(LOCAL)/lib/libpopt.a: popt-build
+$(LOCAL)/lib/libpopt.a: popt-1.16/.libs/libpopt.a
 	$(MAKE) -C popt-1.16 DESTDIR=$(DESTDIR) prefix= install
 
 popt-install: $(LOCAL)/lib/libpopt.a
@@ -203,7 +203,7 @@ util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a: util-linux-ng-2.18/autoconf/
 
 util-linux-ng-build: util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a
 
-$(LOCAL)/lib/libuuid.a: util-linux-ng-build
+$(LOCAL)/lib/libuuid.a: util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a
 	$(MAKE) -C util-linux-ng-2.18 DESTDIR=$(DESTDIR) prefix= install
 
 util-linux-ng-install: $(LOCAL)/lib/libuuid.a
@@ -231,7 +231,7 @@ cryptsetup/src/cryptsetup.static: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgc
 
 cryptsetup-build: cryptsetup/src/cryptsetup.static
 
-$(LOCAL)/sbin/cryptsetup: cryptsetup-build
+$(LOCAL)/sbin/cryptsetup: cryptsetup/src/cryptsetup.static
 	$(MAKE) -C cryptsetup DESTDIR=$(DESTDIR) prefix= install
 
 cryptsetup-install: $(LOCAL)/sbin/cryptsetup
