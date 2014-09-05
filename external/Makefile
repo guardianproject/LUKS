@@ -70,9 +70,8 @@ libgpg-error/config.guess: config.guess
 	cp config.guess libgpg-error/config.guess
 
 libgpg-error/Makefile: libgpg-error/config.sub libgpg-error/config.guess
-	-cd libgpg-error && patch -N -p1 --reject-file=- < ../libgpg-error-android.diff
 	cd libgpg-error && \
-		./autogen.sh && \
+		./autogen.sh && automake --add-missing && \
 		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			--disable-languages --enable-static --host=$(HOST)
 
