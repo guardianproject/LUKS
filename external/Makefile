@@ -160,33 +160,33 @@ lvm2-install: $(LOCAL)/lib/libdevmapper.a
 #------------------------------------------------------------------------------#
 # popt
 
-popt-1.14.tar.gz.asc: popt-1.14.tar.gz
-	wget http://rpm5.org/files/popt/popt-1.14.tar.gz.asc
+popt-1.16.tar.gz.asc: popt-1.16.tar.gz
+	touch $@
 # TODO verify
 
-popt-1.14.tar.gz:
-	wget -c http://rpm5.org/files/popt/popt-1.14.tar.gz
-	sha1sum -c popt-1.14.tar.gz.sha1
+popt-1.16.tar.gz:
+	wget -c http://rpm5.org/files/popt/popt-1.16.tar.gz
+	#sha1sum -c popt-1.16.tar.gz.sha1
 
-popt-1.14: popt-1.14.tar.gz.asc
-	tar xzf popt-1.14.tar.gz
-	patch -p0 < popt-1.14-android.diff
+popt-1.16: popt-1.16.tar.gz.asc
+	tar xzf popt-1.16.tar.gz
+	patch -p0 < popt-1.16-android.diff
 
-popt-1.14/config.sub: popt-1.14 config.sub
-	cp config.sub popt-1.14/config.sub
+popt-1.16/config.sub: popt-1.16 config.sub
+	cp config.sub popt-1.16/config.sub
 
-popt-1.14/config.guess: popt-1.14 config.guess
-	cp config.guess popt-1.14/config.guess
+popt-1.16/config.guess: popt-1.16 config.guess
+	cp config.guess popt-1.16/config.guess
 
-popt-build: popt-1.14 popt-1.14/config.sub popt-1.14/config.guess
-	cd popt-1.14 && \
-		autoreconf && \
+popt-build: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
+	cd popt-1.16 && \
+		autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --prefix=$(prefix) --host=$(HOST) --enable-static
-	$(MAKE) -C popt-1.14
+	$(MAKE) -C popt-1.16
 
 $(LOCAL)/lib/libpopt.a: popt-build
-	$(MAKE) -C popt-1.14 DESTDIR=$(DESTDIR) prefix= install
+	$(MAKE) -C popt-1.16 DESTDIR=$(DESTDIR) prefix= install
 
 popt-install: $(LOCAL)/lib/libpopt.a
 
