@@ -63,32 +63,26 @@ all: cryptsetup-install
 #------------------------------------------------------------------------------#
 # libgpg-error
 
-libgpg-error-1.10.tar.bz2.sig: libgpg-error-1.10.tar.bz2
-	wget ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2.sig
-# TODO verify
+libgpg-error/config.sub: config.sub
+	cp config.sub libgpg-error/config.sub
 
-libgpg-error-1.10.tar.bz2:
-	wget -c ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2
-	sha1sum -c libgpg-error-1.10.tar.bz2.sha1
+libgpg-error/config.guess: config.guess
+	cp config.guess libgpg-error/config.guess
 
-libgpg-error-1.10: libgpg-error-1.10.tar.bz2.sig
-	tar xjf libgpg-error-1.10.tar.bz2
-	cp config.guess config.sub libgpg-error-1.10/
-
-libgpg-error-1.10/config.sub: libgpg-error-1.10 config.sub
-	cp config.sub libgpg-error-1.10/config.sub
-
-libgpg-error-1.10/config.guess: libgpg-error-1.10 config.guess
-	cp config.guess libgpg-error-1.10/config.guess
-
-libgpg-error-build: libgpg-error-1.10/config.sub libgpg-error-1.10/config.guess
-	cd libgpg-error-1.10 && \
+libgpg-error/Makefile: libgpg-error/config.sub libgpg-error/config.guess
+	-cd libgpg-error && patch -N -p1 --reject-file=- < ../libgpg-error-android.diff
+	cd libgpg-error && \
+		./autogen.sh && \
 		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			--disable-languages --enable-static --host=$(HOST)
-	$(MAKE) -C libgpg-error-1.10
+
+libgpg-error/src/.libs/libgpg-error.a: libgpg-error/Makefile
+	$(MAKE) -C libgpg-error
+
+libgpg-error-build: libgpg-error/src/.libs/libgpg-error.a
 
 $(LOCAL)/lib/libgpg-error.a: libgpg-error-build
-	$(MAKE) -C libgpg-error-1.10 DESTDIR=$(DESTDIR) prefix= install
+	$(MAKE) -C libgpg-error DESTDIR=$(DESTDIR) prefix= install
 
 libgpg-error-install: $(LOCAL)/lib/libgpg-error.a
 

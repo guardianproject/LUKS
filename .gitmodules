@@ -1,3 +1,6 @@
 [submodule "external/cryptsetup"]
 	path = external/cryptsetup
 	url = https://code.google.com/p/cryptsetup/
+[submodule "external/libgpg-error"]
+	path = external/libgpg-error
+	url = git://git.gnupg.org/libgpg-error.git
