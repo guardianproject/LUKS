@@ -194,14 +194,14 @@ popt-install: $(LOCAL)/lib/libpopt.a
 #------------------------------------------------------------------------------#
 # util-linux
 
-util-linux-ng-2.18.tar.bz2.sign: util-linux-ng-2.18.tar.bz2
-	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2.sign
+util-linux-ng-2.18.tar.sign: util-linux-ng-2.18.tar.bz2
+	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.sign
 
 util-linux-ng-2.18.tar.bz2:
 	wget -c http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2
 	sha1sum -c util-linux-ng-2.18.tar.bz2.sha1
 
-util-linux-ng-2.18: util-linux-ng-2.18.tar.bz2.sign
+util-linux-ng-2.18: util-linux-ng-2.18.tar.sign
 	tar xjf util-linux-ng-2.18.tar.bz2
 	patch -p0 < util-linux-ng-2.18-android.diff
 
