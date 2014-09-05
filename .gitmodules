@@ -4,3 +4,6 @@
 [submodule "external/libgpg-error"]
 	path = external/libgpg-error
 	url = git://git.gnupg.org/libgpg-error.git
+[submodule "external/libgcrypt"]
+	path = external/libgcrypt
+	url = git://git.gnupg.org/libgcrypt.git
