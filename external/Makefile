@@ -16,7 +16,13 @@ NDK_BASE ?=  /usr/local/android-ndk
 NDK_PLATFORM_LEVEL ?= 9
 NDK_SYSROOT=$(NDK_BASE)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-arm
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
-NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$(NDK_UNAME)-x86
+CPU := $(shell uname -m)
+ifeq ($(CPU),x86_64)
+  NDK_PROCESSOR=x86_64
+else
+  NDK_PROCESSOR=x86
+endif
+NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
 # to use the real HOST tag, you need the latest libtool files:
 # http://stackoverflow.com/questions/4594736/configure-does-not-recognize-androideabi
