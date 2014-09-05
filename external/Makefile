@@ -159,12 +159,14 @@ popt-1.16/config.sub: popt-1.16 config.sub
 popt-1.16/config.guess: popt-1.16 config.guess
 	cp config.guess popt-1.16/config.guess
 
-popt-build: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
+libpopt-1.16/.libs/libpopt.a: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
 	cd popt-1.16 && \
 		autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --prefix=$(prefix) --host=$(HOST) --enable-static
 	$(MAKE) -C popt-1.16
+
+popt-build: libpopt-1.16/.libs/libpopt.a
 
 $(LOCAL)/lib/libpopt.a: popt-build
 	$(MAKE) -C popt-1.16 DESTDIR=$(DESTDIR) prefix= install
@@ -192,12 +194,14 @@ util-linux-ng-2.18/autoconf/config.sub: util-linux-ng-2.18 config.sub
 util-linux-ng-2.18/autoconf/config.guess: util-linux-ng-2.18 config.guess
 	cp config.guess util-linux-ng-2.18/config/config.guess
 
-util-linux-ng-build: util-linux-ng-2.18/autoconf/config.guess util-linux-ng-2.18/autoconf/config.sub
+util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a: util-linux-ng-2.18/autoconf/config.guess util-linux-ng-2.18/autoconf/config.sub
 	cd util-linux-ng-2.18 && \
 		./autogen.sh && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --without-ncurses --disable-unshare --disable-rename --disable-wall --disable-mount --disable-fsck --disable-libblkid --disable-libmount --enable-pkgconfig
 	$(MAKE) -C util-linux-ng-2.18
+
+util-linux-ng-build: util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a
 
 $(LOCAL)/lib/libuuid.a: util-linux-ng-build
 	$(MAKE) -C util-linux-ng-2.18 DESTDIR=$(DESTDIR) prefix= install
