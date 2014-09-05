@@ -55,7 +55,7 @@ LDFLAGS = -L$(LOCAL)/lib -Wl,--rpath,$(LOCAL)/lib
 # download sources and verify
 
 
-SOURCEDIRS = libgpg-error-1.10 libgcrypt-1.4.6 popt-1.14 cryptsetup-1.2.0 LVM2.2.02.79 util-linux-ng-2.18
+SOURCEDIRS = libgpg-error libgcrypt popt-1.16 cryptsetup LVM2.2.02.79 util-linux-ng-2.18
 
 all: cryptsetup-install
 
