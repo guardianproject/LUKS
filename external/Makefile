@@ -55,7 +55,8 @@ LDFLAGS = -L$(LOCAL)/lib -Wl,--rpath,$(LOCAL)/lib
 # download sources and verify
 
 
-SOURCEDIRS = libgpg-error libgcrypt popt-1.16 cryptsetup lvm2 util-linux-ng-2.18
+TARBALLDIRS = popt-1.16
+SOURCEDIRS = libgpg-error libgcrypt cryptsetup lvm2 util-linux
 
 all: cryptsetup-install
 
@@ -246,13 +247,14 @@ install_clean:
 	rm -rf -- bin include lib sbin share
 
 sourcedirs_clean:
-	rm -rf -- $(SOURCEDIRS)
+	rm -rf -- $(TARBALLDIRS)
 
 clean: sourcedirs_clean install_clean
 
 distclean: clean tarballs_clean
+	$(foreach dir, $(SOURCEDIRS), make -C $(dir) distclean;)
 
 .PHONY = libgpg-error-build libgcrypt-build lvm2-build popt-build	\
-	cryptosetup-build util-linux-ng-build libgpg-error-install		\
+	cryptosetup-build util-linux-build libgpg-error-install		\
 	libgcrypt-install lvm2-install popt-install cryptosetup-install	\
 	util-linux-ng-install clean tarballs_clean sourcedirs_clean
