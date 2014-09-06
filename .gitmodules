@@ -10,3 +10,6 @@
 [submodule "external/lvm2"]
 	path = external/lvm2
 	url = https://git.fedorahosted.org/git/lvm2.git
+[submodule "external/util-linux"]
+	path = external/util-linux
+	url = https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git

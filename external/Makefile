@@ -177,36 +177,33 @@ popt-install: $(LOCAL)/lib/libpopt.a
 #------------------------------------------------------------------------------#
 # util-linux
 
-util-linux-ng-2.18.tar.sign: util-linux-ng-2.18.tar.bz2
-	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.sign
+util-linux/config/config.sub: config.sub
+	cp config.sub util-linux/config/config.sub
 
-util-linux-ng-2.18.tar.bz2:
-	wget -c http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2
-	sha1sum -c util-linux-ng-2.18.tar.bz2.sha1
+util-linux/config/config.guess: config.guess
+	cp config.guess util-linux/config/config.guess
 
-util-linux-ng-2.18: util-linux-ng-2.18.tar.sign
-	tar xjf util-linux-ng-2.18.tar.bz2
-	patch -p0 < util-linux-ng-2.18-android.diff
+util-linux/config/config.rpath:
+	touch $@
 
-util-linux-ng-2.18/autoconf/config.sub: util-linux-ng-2.18 config.sub
-	cp config.sub util-linux-ng-2.18/config/config.sub
+util-linux/configure: util-linux/configure.ac util-linux/config/config.guess util-linux/config/config.sub util-linux/config/config.rpath
+	-patch -p0 -N --reject-file=- < util-linux-android.diff
+	cd util-linux && ./autogen.sh
 
-util-linux-ng-2.18/autoconf/config.guess: util-linux-ng-2.18 config.guess
-	cp config.guess util-linux-ng-2.18/config/config.guess
-
-util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a: util-linux-ng-2.18/autoconf/config.guess util-linux-ng-2.18/autoconf/config.sub
-	cd util-linux-ng-2.18 && \
-		./autogen.sh && \
+util-linux/Makefile: util-linux/configure
+	cd util-linux && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --without-ncurses --disable-unshare --disable-rename --disable-wall --disable-mount --disable-fsck --disable-libblkid --disable-libmount --enable-pkgconfig
-	$(MAKE) -C util-linux-ng-2.18
 
-util-linux-ng-build: util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a
+util-linux/shlibs/uuid/src/.libs/libuuid.a: util-linux/Makefile
+	$(MAKE) -C util-linux
 
-$(LOCAL)/lib/libuuid.a: util-linux-ng-2.18/shlibs/uuid/src/.libs/libuuid.a
-	$(MAKE) -C util-linux-ng-2.18 DESTDIR=$(DESTDIR) prefix= install
+util-linux-build: util-linux/shlibs/uuid/src/.libs/libuuid.a
 
-util-linux-ng-install: $(LOCAL)/lib/libuuid.a
+$(LOCAL)/lib/libuuid.a: util-linux/shlibs/uuid/src/.libs/libuuid.a
+	$(MAKE) -C util-linux DESTDIR=$(DESTDIR) prefix= install
+
+util-linux-install: $(LOCAL)/lib/libuuid.a
 
 
 #------------------------------------------------------------------------------#

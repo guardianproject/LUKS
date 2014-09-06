@@ -1,0 +1,53 @@
+--- util-linux/autogen.sh
++++ util-linux/autogen.sh
+@@ -80,7 +80,7 @@ echo "   automake:   $(automake --version | head -1)"
+ #echo "   libtoolize: $(libtoolize --version | head -1)"
+ 
+ set -e
+-autopoint --force $AP_OPTS
++#autopoint --force $AP_OPTS
+ #libtoolize --force --copy $LT_OPTS
+ aclocal -I m4 $AL_OPTS
+ autoconf $AC_OPTS
+--- util-linux/Makefile.am	2010-03-18 18:11:23.000000000 -0400
++++ util-linux/Makefile.am	2011-02-01 23:56:33.000000000 -0500
+@@ -2,18 +2,9 @@
+ 
+ SUBDIRS = \
+ 	include \
+-	disk-utils \
+-	fdisk \
+ 	getopt \
+-	lib \
+ 	shlibs \
+-	login-utils \
+-	misc-utils \
+-	po \
+-	schedutils \
+-	sys-utils \
+-	text-utils \
+-	tests
++	po
+ 
+ 
+ RCS_FIND_IGNORE := \( -name SCCS -o -name BitKeeper -o -name .svn -o \
+@@ -21,7 +12,6 @@
+ 
+ if LINUX
+ SUBDIRS += \
+-	hwclock \
+ 	partx
+ endif
+ 
+diff --git a/configure.ac b/configure.ac
+index 7aff916..6469552 100644
+--- util-linux/configure.ac
++++ util-linux/configure.ac
+@@ -1137,7 +1137,6 @@ misc-utils/chkdupexe:misc-utils/chkdupexe.pl
+ misc-utils/Makefile
+ mount/Makefile
+ partx/Makefile
+-po/Makefile.in
+ schedutils/Makefile
+ shlibs/blkid/blkid.pc
+ shlibs/blkid/Makefile
