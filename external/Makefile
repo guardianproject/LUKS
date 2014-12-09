@@ -13,7 +13,7 @@ EXTERNAL_ROOT = $(PROJECT_ROOT)/external
 
 # Android NDK setup
 NDK_BASE ?=  /usr/local/android-ndk
-NDK_PLATFORM_LEVEL ?= 9
+NDK_PLATFORM_LEVEL ?= 21
 NDK_TOOLCHAIN_VERSION ?= 4.8
 NDK_SYSROOT=$(NDK_BASE)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-arm
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
@@ -222,7 +222,7 @@ cryptsetup/Makefile: cryptsetup/config.sub cryptsetup/config.guess
 	cd cryptsetup && \
 	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --disable-selinux --enable-static-cryptsetup --disable-kernel_crypto
+			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --disable-selinux --enable-static-cryptsetup
 
 cryptsetup/src/cryptsetup.static: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup/Makefile
 	$(MAKE) -C cryptsetup
@@ -251,7 +251,7 @@ sourcedirs_clean:
 
 clean: sourcedirs_clean install_clean
 
-distclean: clean tarballs_clean
+distclean: clean tarballs-clean
 	$(foreach dir, $(SOURCEDIRS), make -C $(dir) distclean;)
 
 .PHONY = libgpg-error-build libgcrypt-build lvm2-build popt-build	\
