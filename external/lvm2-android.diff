@@ -1,5 +1,25 @@
---- LVM2.2.02.79/configure.in	2010-12-13 05:43:56.000000000 -0500
-+++ LVM2.2.02.79/configure.in	2011-02-01 20:40:58.000000000 -0500
+--- lvm2/Makefile.in	2010-11-22 16:39:47.000000000 -0500
++++ lvm2/Makefile.in	2011-02-01 21:11:57.000000000 -0500
+@@ -16,7 +16,7 @@
+ top_srcdir = @top_srcdir@
+ top_builddir = @top_builddir@
+ 
+-SUBDIRS = doc include man scripts
++SUBDIRS = include scripts
+ 
+ ifeq ("@UDEV_RULES@", "yes")
+   SUBDIRS += udev
+@@ -26,7 +26,7 @@
+   SUBDIRS += po
+ endif
+ 
+-SUBDIRS += lib tools daemons libdm
++SUBDIRS += libdm
+ 
+ ifeq ("@APPLIB@", "yes")
+   SUBDIRS += liblvm
+--- lvm2/configure.in	2010-12-13 05:43:56.000000000 -0500
++++ lvm2/configure.in	2011-02-01 20:40:58.000000000 -0500
 @@ -84,7 +84,7 @@
  AC_HEADER_TIME
  
@@ -20,23 +40,3 @@
    strcasecmp strchr strcspn strspn strdup strncasecmp strerror strrchr \
    strstr strtol strtoul uname], , [AC_MSG_ERROR(bailing out)])
  AC_CHECK_FUNCS(siginterrupt)
---- LVM2.2.02.79/Makefile.in	2010-11-22 16:39:47.000000000 -0500
-+++ LVM2.2.02.79/Makefile.in	2011-02-01 21:11:57.000000000 -0500
-@@ -16,7 +16,7 @@
- top_srcdir = @top_srcdir@
- top_builddir = @top_builddir@
- 
--SUBDIRS = doc include man scripts
-+SUBDIRS = include scripts
- 
- ifeq ("@UDEV_RULES@", "yes")
-   SUBDIRS += udev
-@@ -26,7 +26,7 @@
-   SUBDIRS += po
- endif
- 
--SUBDIRS += lib tools daemons libdm
-+SUBDIRS += libdm
- 
- ifeq ("@APPLIB@", "yes")
-   SUBDIRS += liblvm

@@ -1,0 +1,15 @@
+[submodule "external/cryptsetup"]
+	path = external/cryptsetup
+	url = https://gitlab.com/cryptsetup/cryptsetup.git
+[submodule "external/libgpg-error"]
+	path = external/libgpg-error
+	url = git://git.gnupg.org/libgpg-error.git
+[submodule "external/libgcrypt"]
+	path = external/libgcrypt
+	url = git://git.gnupg.org/libgcrypt.git
+[submodule "external/lvm2"]
+	path = external/lvm2
+	url = https://git.fedorahosted.org/git/lvm2.git
+[submodule "external/util-linux"]
+	path = external/util-linux
+	url = https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git

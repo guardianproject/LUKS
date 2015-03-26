@@ -13,10 +13,17 @@ EXTERNAL_ROOT = $(PROJECT_ROOT)/external
 
 # Android NDK setup
 NDK_BASE ?=  /usr/local/android-ndk
-NDK_PLATFORM_LEVEL ?= 9
+NDK_PLATFORM_LEVEL ?= 21
+NDK_TOOLCHAIN_VERSION ?= 4.8
 NDK_SYSROOT=$(NDK_BASE)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-arm
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
-NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/$(NDK_UNAME)-x86
+CPU := $(shell uname -m)
+ifeq ($(CPU),x86_64)
+  NDK_PROCESSOR=x86_64
+else
+  NDK_PROCESSOR=x86
+endif
+NDK_TOOLCHAIN=$(NDK_BASE)/toolchains/arm-linux-androideabi-$(NDK_TOOLCHAIN_VERSION)/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
 # to use the real HOST tag, you need the latest libtool files:
 # http://stackoverflow.com/questions/4594736/configure-does-not-recognize-androideabi
@@ -48,7 +55,8 @@ LDFLAGS = -L$(LOCAL)/lib -Wl,--rpath,$(LOCAL)/lib
 # download sources and verify
 
 
-SOURCEDIRS = libgpg-error-1.10 libgcrypt-1.4.6 popt-1.14 cryptsetup-1.2.0 LVM2.2.02.79 util-linux-ng-2.18
+TARBALLDIRS = popt-1.16
+SOURCEDIRS = libgpg-error libgcrypt cryptsetup lvm2 util-linux
 
 all: cryptsetup-install
 
@@ -56,32 +64,25 @@ all: cryptsetup-install
 #------------------------------------------------------------------------------#
 # libgpg-error
 
-libgpg-error-1.10.tar.bz2.sig: libgpg-error-1.10.tar.bz2
-	wget ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2.sig
-# TODO verify
+libgpg-error/config.sub: config.sub
+	cp config.sub libgpg-error/config.sub
 
-libgpg-error-1.10.tar.bz2:
-	wget -c ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.10.tar.bz2
-	sha1sum -c libgpg-error-1.10.tar.bz2.sha1
+libgpg-error/config.guess: config.guess
+	cp config.guess libgpg-error/config.guess
 
-libgpg-error-1.10: libgpg-error-1.10.tar.bz2.sig
-	tar xjf libgpg-error-1.10.tar.bz2
-	cp config.guess config.sub libgpg-error-1.10/
-
-libgpg-error-1.10/config.sub: libgpg-error-1.10 config.sub
-	cp config.sub libgpg-error-1.10/config.sub
-
-libgpg-error-1.10/config.guess: libgpg-error-1.10 config.guess
-	cp config.guess libgpg-error-1.10/config.guess
-
-libgpg-error-build: libgpg-error-1.10/config.sub libgpg-error-1.10/config.guess
-	cd libgpg-error-1.10 && \
+libgpg-error/Makefile: libgpg-error/config.sub libgpg-error/config.guess
+	cd libgpg-error && \
+		./autogen.sh && automake --add-missing && \
 		./configure CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			--disable-languages --enable-static --host=$(HOST)
-	$(MAKE) -C libgpg-error-1.10
 
-$(LOCAL)/lib/libgpg-error.a: libgpg-error-build
-	$(MAKE) -C libgpg-error-1.10 DESTDIR=$(DESTDIR) prefix= install
+libgpg-error/src/.libs/libgpg-error.a: libgpg-error/Makefile
+	$(MAKE) -C libgpg-error
+
+libgpg-error-build: libgpg-error/src/.libs/libgpg-error.a
+
+$(LOCAL)/lib/libgpg-error.a: libgpg-error/src/.libs/libgpg-error.a
+	$(MAKE) -C libgpg-error DESTDIR=$(DESTDIR) prefix= install
 
 libgpg-error-install: $(LOCAL)/lib/libgpg-error.a
 
@@ -89,32 +90,25 @@ libgpg-error-install: $(LOCAL)/lib/libgpg-error.a
 #------------------------------------------------------------------------------#
 # 
 
-libgcrypt-1.4.6.tar.bz2.sig: libgcrypt-1.4.6.tar.bz2
-	wget ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.6.tar.bz2.sig
+libgcrypt/config.sub: config.sub
+	cp config.sub libgcrypt/config.sub
 
-libgcrypt-1.4.6.tar.bz2:
-	wget -c ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-1.4.6.tar.bz2
-	sha1sum -c libgcrypt-1.4.6.tar.bz2.sha1
+libgcrypt/config.guess: config.guess
+	cp config.guess libgcrypt/config.guess
 
-libgcrypt-1.4.6: libgcrypt-1.4.6.tar.bz2.sig
-	tar xjf libgcrypt-1.4.6.tar.bz2
-	patch -p0 < libgcrypt-1.4.6-android.diff
-
-libgcrypt-1.4.6/config.sub: libgcrypt-1.4.6 config.sub
-	cp config.sub libgcrypt-1.4.6/config.sub
-
-libgcrypt-1.4.6/config.guess: libgcrypt-1.4.6 config.guess
-	cp config.guess libgcrypt-1.4.6/config.guess
-
-libgcrypt-build: libgpg-error-install libgcrypt-1.4.6 libgcrypt-1.4.6/config.sub libgcrypt-1.4.6/config.guess
-	cd libgcrypt-1.4.6 && \
-		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+libgcrypt/Makefile: libgcrypt/config.sub libgcrypt/config.guess
+	cd libgcrypt && \
+		autoreconf -i && \
+		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="-lgpg-error $(LDFLAGS)" \
 			./configure --enable-maintainer-mode --enable-static --host=$(HOST) --with-gpg-error-prefix=$(LOCAL) --prefix=$(prefix)
-	$(MAKE) -C libgcrypt-1.4.6
 
-$(LOCAL)/lib/libgcrypt.a: libgcrypt-build
-	$(MAKE) -C libgcrypt-1.4.6 DESTDIR=$(DESTDIR) prefix= install
-	ls -l $(LOCAL)/lib/libgcrypt.a
+libgcrypt/src/.libs/libgcrypt.a: $(LOCAL)/lib/libgpg-error.a libgcrypt/Makefile
+	$(MAKE) -C libgcrypt
+
+libgcrypt-build: libgcrypt/src/.libs/libgcrypt.a
+
+$(LOCAL)/lib/libgcrypt.a: libgcrypt/src/.libs/libgcrypt.a
+	$(MAKE) -C libgcrypt DESTDIR=$(DESTDIR) prefix= install
 
 libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
 
@@ -126,33 +120,21 @@ libgcrypt-install: $(LOCAL)/lib/libgcrypt.a
 #------------------------------------------------------------------------------#
 # LVM2
 
-LVM2.2.02.79.tgz.asc: LVM2.2.02.79.tgz
-	wget ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz.asc
-# TODO verify
-
-LVM2.2.02.79.tgz:
-	wget -c ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.79.tgz
-	sha1sum -c LVM2.2.02.79.tgz.sha1
-
-LVM2.2.02.79: LVM2.2.02.79.tgz.asc
-	tar xzf LVM2.2.02.79.tgz
-	patch -p0 < LVM2.2.02.79-android.diff
-
-LVM2.2.02.79/autoconf/config.sub: LVM2.2.02.79 config.sub
-	cp config.sub LVM2.2.02.79/autoconf/config.sub
-
-LVM2.2.02.79/autoconf/config.guess: LVM2.2.02.79 config.guess
-	cp config.guess LVM2.2.02.79/autoconf/config.guess
-
-#Now we have to get LVM2
-lvm2-build: LVM2.2.02.79/autoconf/config.sub LVM2.2.02.79/autoconf/config.guess
-	cd LVM2.2.02.79 && \
+lvm2/Makefile:
+	cp config.sub lvm2/autoconf/config.sub
+	cp config.guess lvm2/autoconf/config.guess
+	-patch -N -p0 --reject-file=- < lvm2-android.diff
+	cd lvm2 && \
 		autoreconf && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" ./configure --host=$(HOST) --prefix=$(prefix) --enable-static_link --enable-lvm1_fallback --enable-fsadm --with-clvmd=cman --with-cluster=internal --with-pool=internal --with-user= --with-group= --with-dmdir=device-mapper.0 --with-device-uid=0 --with-device-gid=6 --with-device-mode=0660 --with-clvmd=none --with-pool=none --with-cluster=none --with-snapshots=none --with-mirrors=none --enable-pkgconfig
-	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C LVM2.2.02.79
 
-$(LOCAL)/lib/libdevmapper.a: lvm2-build
-	$(MAKE) -C LVM2.2.02.79 DESTDIR=$(DESTDIR) prefix= install
+lvm2/libdm/ioctl/libdevmapper.a: lvm2/Makefile
+	$(MAKE) CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C lvm2
+
+lvm2-build: lvm2/libdm/ioctl/libdevmapper.a
+
+$(LOCAL)/lib/libdevmapper.a: lvm2/libdm/ioctl/libdevmapper.a
+	$(MAKE) -C lvm2 DESTDIR=$(DESTDIR) prefix= install
 
 lvm2-install: $(LOCAL)/lib/libdevmapper.a
 
@@ -160,33 +142,35 @@ lvm2-install: $(LOCAL)/lib/libdevmapper.a
 #------------------------------------------------------------------------------#
 # popt
 
-popt-1.14.tar.gz.asc: popt-1.14.tar.gz
-	wget http://rpm5.org/files/popt/popt-1.14.tar.gz.asc
+popt-1.16.tar.gz.asc: popt-1.16.tar.gz
+	touch $@
 # TODO verify
 
-popt-1.14.tar.gz:
-	wget -c http://rpm5.org/files/popt/popt-1.14.tar.gz
-	sha1sum -c popt-1.14.tar.gz.sha1
+popt-1.16.tar.gz:
+	wget -c http://rpm5.org/files/popt/popt-1.16.tar.gz
+	sha1sum -c popt-1.16.tar.gz.sha1
 
-popt-1.14: popt-1.14.tar.gz.asc
-	tar xzf popt-1.14.tar.gz
-	patch -p0 < popt-1.14-android.diff
+popt-1.16: popt-1.16.tar.gz.asc
+	tar xzf popt-1.16.tar.gz
+	patch -p0 < popt-1.16-android.diff
 
-popt-1.14/config.sub: popt-1.14 config.sub
-	cp config.sub popt-1.14/config.sub
+popt-1.16/config.sub: popt-1.16 config.sub
+	cp config.sub popt-1.16/config.sub
 
-popt-1.14/config.guess: popt-1.14 config.guess
-	cp config.guess popt-1.14/config.guess
+popt-1.16/config.guess: popt-1.16 config.guess
+	cp config.guess popt-1.16/config.guess
 
-popt-build: popt-1.14 popt-1.14/config.sub popt-1.14/config.guess
-	cd popt-1.14 && \
-		autoreconf && \
+popt-1.16/.libs/libpopt.a: popt-1.16 popt-1.16/config.sub popt-1.16/config.guess
+	cd popt-1.16 && \
+		autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --prefix=$(prefix) --host=$(HOST) --enable-static
-	$(MAKE) -C popt-1.14
+	$(MAKE) -C popt-1.16
 
-$(LOCAL)/lib/libpopt.a: popt-build
-	$(MAKE) -C popt-1.14 DESTDIR=$(DESTDIR) prefix= install
+popt-build: popt-1.16/.libs/libpopt.a
+
+$(LOCAL)/lib/libpopt.a: popt-1.16/.libs/libpopt.a
+	$(MAKE) -C popt-1.16 DESTDIR=$(DESTDIR) prefix= install
 
 popt-install: $(LOCAL)/lib/libpopt.a
 
@@ -194,68 +178,64 @@ popt-install: $(LOCAL)/lib/libpopt.a
 #------------------------------------------------------------------------------#
 # util-linux
 
-util-linux-ng-2.18.tar.bz2.sign: util-linux-ng-2.18.tar.bz2
-	wget http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2.sign
+util-linux/config/config.sub: config.sub
+	cp config.sub util-linux/config/config.sub
 
-util-linux-ng-2.18.tar.bz2:
-	wget -c http://www.kernel.org/pub/linux/utils/util-linux/v2.18/util-linux-ng-2.18.tar.bz2
-	sha1sum -c util-linux-ng-2.18.tar.bz2.sha1
+util-linux/config/config.guess: config.guess
+	cp config.guess util-linux/config/config.guess
 
-util-linux-ng-2.18: util-linux-ng-2.18.tar.bz2.sign
-	tar xjf util-linux-ng-2.18.tar.bz2
-	patch -p0 < util-linux-ng-2.18-android.diff
+util-linux/config/config.rpath:
+	touch $@
 
-util-linux-ng-2.18/autoconf/config.sub: util-linux-ng-2.18 config.sub
-	cp config.sub util-linux-ng-2.18/config/config.sub
+util-linux/configure: util-linux/configure.ac util-linux/config/config.guess util-linux/config/config.sub util-linux/config/config.rpath
+	-patch -p0 -N --reject-file=- < util-linux-android.diff
+	cd util-linux && ./autogen.sh
 
-util-linux-ng-2.18/autoconf/config.guess: util-linux-ng-2.18 config.guess
-	cp config.guess util-linux-ng-2.18/config/config.guess
-
-util-linux-ng-build: util-linux-ng-2.18/autoconf/config.guess util-linux-ng-2.18/autoconf/config.sub
-	cd util-linux-ng-2.18 && \
-		./autogen.sh && \
+util-linux/Makefile: util-linux/configure
+	cd util-linux && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --without-ncurses --disable-unshare --disable-rename --disable-wall --disable-mount --disable-fsck --disable-libblkid --disable-libmount --enable-pkgconfig
-	$(MAKE) -C util-linux-ng-2.18
 
-$(LOCAL)/lib/libuuid.a: util-linux-ng-build
-	$(MAKE) -C util-linux-ng-2.18 DESTDIR=$(DESTDIR) prefix= install
+util-linux/shlibs/uuid/src/.libs/libuuid.a: util-linux/Makefile
+	$(MAKE) -C util-linux
 
-util-linux-ng-install: $(LOCAL)/lib/libuuid.a
+util-linux-build: util-linux/shlibs/uuid/src/.libs/libuuid.a
+
+$(LOCAL)/lib/libuuid.a: util-linux/shlibs/uuid/src/.libs/libuuid.a
+	$(MAKE) -C util-linux DESTDIR=$(DESTDIR) prefix= install
+
+util-linux-install: $(LOCAL)/lib/libuuid.a
 
 
 #------------------------------------------------------------------------------#
 # cryptsetup
 
-cryptsetup-1.2.0.tar.bz2.asc: cryptsetup-1.2.0.tar.bz2
-	wget http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2.asc
-# TODO verify
+cryptsetup/config.sub: config.sub
+	cp config.sub cryptsetup/config.sub
 
-cryptsetup-1.2.0.tar.bz2: 
-	wget -c http://cryptsetup.googlecode.com/files/cryptsetup-1.2.0.tar.bz2
-	sha1sum -c cryptsetup-1.2.0.tar.bz2.sha1
+cryptsetup/config.guess: config.guess
+	cp config.guess cryptsetup/config.guess
 
-cryptsetup-1.2.0: cryptsetup-1.2.0.tar.bz2.asc
-	tar xjf cryptsetup-1.2.0.tar.bz2
-	patch -p0 < cryptsetup-1.2.0-android.diff
-
-cryptsetup-1.2.0/config.sub: cryptsetup-1.2.0 config.sub
-	cp config.sub cryptsetup-1.2.0/config.sub
-
-cryptsetup-1.2.0/config.guess: cryptsetup-1.2.0 config.guess
-	cp config.guess cryptsetup-1.2.0/config.guess
-
-cryptsetup-build: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup-1.2.0 cryptsetup-1.2.0/config.sub cryptsetup-1.2.0/config.guess
-	rm lib/*.la
-	cd cryptsetup-1.2.0 && \
+cryptsetup/Makefile: cryptsetup/config.sub cryptsetup/config.guess
+	-patch -N -p0 --reject-file=- < cryptsetup-android.diff
+	rm -f lib/*.la
+	cd cryptsetup && \
+	  autoreconf -i && \
 		CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --enable-libgcrypt --enable-libdevmapper --disable-selinux --enable-static-cryptsetup
-	$(MAKE) -C cryptsetup-1.2.0
+			./configure --host=$(HOST) --prefix=$(prefix) --enable-static --disable-selinux --enable-static-cryptsetup
 
-$(LOCAL)/sbin/cryptsetup: cryptsetup-build
-	$(MAKE) -C cryptsetup-1.2.0 DESTDIR=$(DESTDIR) prefix= install
+cryptsetup/src/cryptsetup.static: $(LOCAL)/lib/libgpg-error.a $(LOCAL)/lib/libgcrypt.a $(LOCAL)/lib/libdevmapper.a $(LOCAL)/lib/libpopt.a $(LOCAL)/lib/libuuid.a cryptsetup/Makefile
+	$(MAKE) -C cryptsetup
+
+cryptsetup-build: cryptsetup/src/cryptsetup.static
+
+$(LOCAL)/sbin/cryptsetup: cryptsetup/src/cryptsetup.static
+	$(MAKE) -C cryptsetup DESTDIR=$(DESTDIR) prefix= install
 
 cryptsetup-install: $(LOCAL)/sbin/cryptsetup
+
+cryptsetup-clean:
+	-$(MAKE) -C cryptsetup clean
 
 #------------------------------------------------------------------------------#
 # clean
@@ -267,13 +247,14 @@ install_clean:
 	rm -rf -- bin include lib sbin share
 
 sourcedirs_clean:
-	rm -rf -- $(SOURCEDIRS)
+	rm -rf -- $(TARBALLDIRS)
 
 clean: sourcedirs_clean install_clean
 
-distclean: clean tarballs_clean
+distclean: clean tarballs-clean
+	$(foreach dir, $(SOURCEDIRS), make -C $(dir) distclean;)
 
 .PHONY = libgpg-error-build libgcrypt-build lvm2-build popt-build	\
-	cryptosetup-build util-linux-ng-build libgpg-error-install		\
+	cryptosetup-build util-linux-build libgpg-error-install		\
 	libgcrypt-install lvm2-install popt-install cryptosetup-install	\
 	util-linux-ng-install clean tarballs_clean sourcedirs_clean

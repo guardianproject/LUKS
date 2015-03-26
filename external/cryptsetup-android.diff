@@ -1,12 +1,12 @@
---- cryptsetup-1.2.0/lib/utils.c	2010-11-15 10:37:46.000000000 -0500
-+++ cryptsetup-1.2.0/lib/utils.c	2011-02-02 01:40:52.000000000 -0500
-@@ -384,11 +384,13 @@
+--- cryptsetup/lib/utils.c	2010-11-15 10:37:46.000000000 -0500
++++ cryptsetup/lib/utils.c	2011-02-02 01:40:52.000000000 -0500
+@@ -234,11 +234,13 @@
  {
  	if (!_memlock_count++) {
  		log_dbg("Locking memory.");
 +#ifndef __ANDROID__
- 		if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
- 			log_err(ctx, _("WARNING!!! Possibly insecure memory. Are you root?\n"));
+ 		if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
+ 			log_dbg("Cannot lock memory with mlockall.");
  			_memlock_count--;
  			return 0;
  		}
@@ -14,32 +14,54 @@
  		errno = 0;
  		if (((_priority = getpriority(PRIO_PROCESS, 0)) == -1) && errno)
  			log_err(ctx, _("Cannot get process priority.\n"));
-@@ -404,8 +406,10 @@
+@@ -254,8 +256,10 @@
  {
  	if (_memlock_count && (!--_memlock_count)) {
  		log_dbg("Unlocking memory.");
 +#ifndef __ANDROID__
- 		if (munlockall())
- 			log_err(ctx, _("Cannot unlock memory."));
+ 		if (munlockall() == -1)
+ 			log_err(ctx, _("Cannot unlock memory.\n"));
 +#endif
  		if (setpriority(PRIO_PROCESS, 0, _priority))
- 			log_err(ctx, _("setpriority %u failed: %s"), _priority, strerror(errno));
+ 			log_dbg("setpriority %d failed: %s", _priority, strerror(errno));
  	}
---- /dev/null	2010-10-27 04:21:23.000000000 -0400
-+++ cryptsetup-1.2.0/src/Makefile.am	2011-02-02 01:48:11.000000000 -0500
-@@ -11,6 +11,10 @@
- 
- cryptsetup_SOURCES = \
+--- cryptsetup/src/Makefile.am	2010-10-27 04:21:23.000000000 -0400
++++ cryptsetup/src/Makefile.am	2011-02-02 01:48:11.000000000 -0500
+@@ -13,6 +13,10 @@
+ 	$(top_builddir)/lib/utils_crypt.c	\
+ 	$(top_builddir)/lib/utils_loop.c	\
+ 	$(top_builddir)/lib/utils_fips.c	\
++	getline.c \
++	getline.h \
++	getdelim.c \
++	getdelim.h \
+ 	utils_tools.c				\
+ 	utils_password.c			\
+ 	cryptsetup.c				\
+@@ -46,6 +50,10 @@
+ veritysetup_SOURCES = \
+ 	$(top_builddir)/lib/utils_crypt.c	\
+ 	$(top_builddir)/lib/utils_loop.c	\
++	getline.c \
++	getline.h \
++	getdelim.c \
++	getdelim.h \
+ 	utils_tools.c				\
+ 	veritysetup.c				\
+ 	cryptsetup.h
+@@ -74,6 +82,10 @@
+ if REENCRYPT
+ cryptsetup_reencrypt_SOURCES = \
  	$(top_builddir)/lib/utils_crypt.c	\
 +	getline.c \
 +	getline.h \
 +	getdelim.c \
 +	getdelim.h \
- 	cryptsetup.c				\
+ 	utils_tools.c				\
+ 	cryptsetup_reencrypt.c			\
  	cryptsetup.h
- 
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ cryptsetup-1.2.0/src/getline.c	2011-02-02 01:45:11.000000000 -0500
++++ cryptsetup/src/getline.c	2011-02-02 01:45:11.000000000 -0500
 @@ -0,0 +1,32 @@
 +/* getline.c --- Implementation of replacement getline function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -74,7 +96,7 @@
 +  return getdelim (lineptr, n, '\n', stream);
 +}
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ cryptsetup-1.2.0/src/getline.h	2011-02-02 01:45:11.000000000 -0500
++++ cryptsetup/src/getline.h	2011-02-02 01:45:11.000000000 -0500
 @@ -0,0 +1,28 @@
 +/* getline.h --- Prototype for replacement getline function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -105,7 +127,7 @@
 +ssize_t getline (char **lineptr, size_t *n, FILE *stream);
 +#endif /* !HAVE_GETLINE */
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ cryptsetup-1.2.0/src/getdelim.c	2011-02-02 01:45:19.000000000 -0500
++++ cryptsetup/src/getdelim.c	2011-02-02 01:45:19.000000000 -0500
 @@ -0,0 +1,128 @@
 +/* getdelim.c --- Implementation of replacement getdelim function.
 +   Copyright (C) 1994, 1996, 1997, 1998, 2001, 2003, 2005 Free
@@ -236,7 +258,7 @@
 +  return result;
 +}
 --- /dev/null	2011-02-01 15:10:32.641579002 -0500
-+++ cryptsetup-1.2.0/src/getdelim.h	2011-02-02 01:45:19.000000000 -0500
++++ cryptsetup/src/getdelim.h	2011-02-02 01:45:19.000000000 -0500
 @@ -0,0 +1,28 @@
 +/* getdelim.h --- Prototype for replacement getdelim function.
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -266,3 +288,139 @@
 +#if !HAVE_DECL_GETDELIM
 +ssize_t getdelim (char **lineptr, size_t *n, int delimiter, FILE *stream);
 +#endif /* !HAVE_GETDELIM */
+--- cryptsetup/lib/bitops.h	2013-01-13 15:04:29.000000000 +0200
++++ cryptsetup/lib/bitops.h	2014-09-05 10:39:41.560394213 +0300
+@@ -98,13 +98,23 @@
+ #define cpu_to_be32(x) ((uint32_t) htobe32(x))
+ #define cpu_to_be64(x) ((uint64_t) htobe64(x))
+ 
+-#define le16_to_cpu(x) ((uint16_t) le16toh(x))
+-#define le32_to_cpu(x) ((uint32_t) le32toh(x))
+-#define le64_to_cpu(x) ((uint64_t) le64toh(x))
++#ifndef __ANDROID__
++# define le16_to_cpu(x) ((uint16_t) le16toh(x))
++# define le32_to_cpu(x) ((uint32_t) le32toh(x))
++# define le64_to_cpu(x) ((uint64_t) le64toh(x))
+ 
+-#define be16_to_cpu(x) ((uint16_t) be16toh(x))
+-#define be32_to_cpu(x) ((uint32_t) be32toh(x))
+-#define be64_to_cpu(x) ((uint64_t) be64toh(x))
++# define be16_to_cpu(x) ((uint16_t) be16toh(x))
++# define be32_to_cpu(x) ((uint32_t) be32toh(x))
++# define be64_to_cpu(x) ((uint64_t) be64toh(x))
++#else // __ANDROID__
++# define le16_to_cpu(x) ((uint16_t) letoh16(x))
++# define le32_to_cpu(x) ((uint32_t) letoh32(x))
++# define le64_to_cpu(x) ((uint64_t) letoh64(x))
++
++# define be16_to_cpu(x) ((uint16_t) betoh16(x))
++# define be32_to_cpu(x) ((uint32_t) betoh32(x))
++# define be64_to_cpu(x) ((uint64_t) betoh64(x))
++#endif // __ANDROID__
+ 
+
+
+--- cryptsetup/lib/libdevmapper.c	2014-07-27 20:34:05.000000000 +0200
++++ cryptsetup/lib/libdevmapper.c	2014-09-05 10:41:01.592747574 +0300
+@@ -28,6 +28,9 @@
+ #include <fcntl.h>
+ #include <linux/fs.h>
+ #include <uuid/uuid.h>
++#ifdef __ANDROID__
++# include <sys/stat.h>
++#endif // __ANDROID__
+ 
+ #include "internal.h"
+ 
+--- cryptsetup/lib/utils_loop.c	2012-12-29 12:20:58.000000000 +0200
++++ cryptsetup/lib/utils_loop.c	2014-09-05 11:30:40.451450745 +0300
+@@ -49,7 +49,11 @@
+ 	struct loop_info64 lo64 = {0};
+ 
+ 	for (i = 0; i < 256; i++) {
++#ifndef __ANDROID__
+ 		sprintf(dev, "/dev/loop%d", i);
++#else // __ANDROID__
++		sprintf(dev, "/dev/block/loop%d", i);
++#endif // __ANDROID__
+ 
+ 		loop_fd = open(dev, O_RDONLY);
+ 		if (loop_fd < 0)
+--- cryptsetup/lib/tcrypt/tcrypt.c	2014-06-25 19:02:01.000000000 +0300
++++ cryptsetup/lib/tcrypt/tcrypt.c	2014-09-05 11:04:29.953583726 +0300
+@@ -487,8 +487,14 @@
+ 	unsigned int i, skipped = 0;
+ 	int r = -EPERM, legacy_modes;
+ 
++#ifndef __ANDROID__
+ 	if (posix_memalign((void*)&key, crypt_getpagesize(), TCRYPT_HDR_KEY_LEN))
+ 		return -ENOMEM;
++#else // __ANDROID__
++  key = (char *) memalign(crypt_getpagesize(), TCRYPT_HDR_KEY_LEN);
++  if(!key)
++		return -ENOMEM;
++#endif // __ANDROID__
+ 
+ 	if (params->keyfiles_count)
+ 		passphrase_size = TCRYPT_KEY_POOL_LEN;
+diff -ur cryptsetup/lib/utils_benchmark.c ../cryptsetup/lib/utils_benchmark.c
+--- cryptsetup/lib/utils_benchmark.c	2014-03-15 09:45:03.000000000 +0200
++++ cryptsetup/lib/utils_benchmark.c	2014-09-05 11:04:43.493669767 +0300
+@@ -145,8 +145,14 @@
+ 	int r, repeat_enc, repeat_dec;
+ 	void *buf = NULL;
+ 
++#ifndef __ANDROID__
+ 	if (posix_memalign(&buf, crypt_getpagesize(), cp->buffer_size))
+ 		return -ENOMEM;
++#else // __ANDROID__
++  buf = memalign(crypt_getpagesize(), cp->buffer_size);
++  if(!buf)
++		return -ENOMEM;
++#endif // __ANDROID__
+ 
+ 	ms_enc = 0.0;
+ 	repeat_enc = 1;
+diff -ur cryptsetup/src/cryptsetup_reencrypt.c ../cryptsetup/src/cryptsetup_reencrypt.c
+--- cryptsetup/src/cryptsetup_reencrypt.c	2014-08-10 15:46:02.000000000 +0300
++++ cryptsetup/src/cryptsetup_reencrypt.c	2014-09-05 11:10:10.795743977 +0300
+@@ -154,7 +154,12 @@
+ 		goto out;
+ 	}
+ 
++#ifndef __ANDROID__
+ 	if (posix_memalign((void *)&buf, alignment(devfd), buf_size)) {
++#else // __ANDROID__
++  buf = (char *) memalign(alignment(devfd), buf_size);
++  if(!buf)
++#endif // __ANDROID__
+ 		log_err(_("Allocation of aligned memory failed.\n"));
+ 		r = -ENOMEM;
+ 		goto out;
+@@ -371,7 +376,13 @@
+ 	if (rc->log_fd == -1)
+ 		return -EINVAL;
+ 
++#ifndef __ANDROID__
+ 	if (posix_memalign((void *)&rc->log_buf, alignment(rc->log_fd), SECTOR_SIZE)) {
++#else // __ANDROID__
++  buf = memalign(alignment(devfd), buf_size);
++  rc->log_buf = (char *) memalign(alignment(rc->log_fd), SECTOR_SIZE);
++  if(!rc->log_buf)
++#endif // __ANDROID__
+ 		log_err(_("Allocation of aligned memory failed.\n"));
+ 		close_log(rc);
+ 		return -ENOMEM;
+@@ -809,7 +820,12 @@
+ 
+ 	rc->device_size = opt_device_size ?: rc->device_size_real;
+ 
++#ifndef __ANDROID__
+ 	if (posix_memalign((void *)&buf, alignment(fd_new), block_size)) {
++#else // __ANDROID__
++  buf = memalign(alignment(fd_new), block_size);
++  if(!buf)
++#endif // __ANDROID__
+ 		log_err(_("Allocation of aligned memory failed.\n"));
+ 		r = -ENOMEM;
+ 		goto out;
